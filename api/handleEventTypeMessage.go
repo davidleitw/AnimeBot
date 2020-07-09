@@ -9,7 +9,7 @@ import (
 func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
-		if message.Text == "!help" {
+		if message.Text == "!help" || message.Text == "-h" || message.Text == "-help" {
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewTextMessage("Help message: Help!"),

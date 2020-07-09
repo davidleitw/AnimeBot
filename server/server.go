@@ -43,7 +43,7 @@ func callbackHandler(ctx *gin.Context) {
 			api.HandleEventTypeFollow(event, bot)
 		// 文字訊息的部份
 		case linebot.EventTypeMessage:
-
+			api.HandleEventTypeMessage(event, bot)
 		// Postback觸發
 		case linebot.EventTypePostback:
 

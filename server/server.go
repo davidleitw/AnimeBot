@@ -46,10 +46,10 @@ func callbackHandler(ctx *gin.Context) {
 			api.HandleEventTypeMessage(event, bot)
 		// Postback觸發
 		case linebot.EventTypePostback:
-
+			api.HandleEventTypePostback(event, bot)
 		// 封鎖linebot的時候
 		case linebot.EventTypeUnfollow:
-
+			api.HandleEventTypeUnfollow(event, bot)
 		}
 	}
 

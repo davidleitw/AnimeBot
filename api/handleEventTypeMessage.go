@@ -19,7 +19,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			if err != nil {
 				log.Println("!help message error = ", err)
 			}
-		} else if message.Text[0] == '@' {
+		} else if message.Text[0] == '@' || message.Text[0] == '!' {
 			// 搜尋單一動漫
 			name := strings.Split(message.Text, "@")[1]
 			_, err := bot.ReplyMessage(

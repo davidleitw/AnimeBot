@@ -21,7 +21,8 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			}
 		} else if message.Text[0] == '@' || message.Text[0] == '!' {
 			// 搜尋單一動漫
-			name := strings.Split(message.Text, "@")[1]
+			sp := string(message.Text[0])
+			name := strings.Split(message.Text, sp)[1]
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewTextMessage("作品名稱: "+name),

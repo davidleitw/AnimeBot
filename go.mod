@@ -1,4 +1,4 @@
-module AnimeBot
+module github.com/davidleitw/AnimeBot
 
 go 1.13
 

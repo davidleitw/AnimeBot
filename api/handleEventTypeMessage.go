@@ -55,8 +55,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			animes := model.SearchAnimeInfoWithKey(name)
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
-				linebot.NewFlexMessage("flex", buildFlexMessageWithAnime(animes[0])),
-				linebot.NewFlexMessage("flex", buildFlexMessageWithAnime(animes[1])),
+				linebot.NewFlexMessage("flex", buildFlexContainerTypeCarousel(animes)),
 			).Do()
 			if err != nil {
 				log.Println("Send search response error = ", err)
@@ -71,6 +70,22 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			}
 		}
 	}
+}
+
+func buildFlexContainerTypeCarousel(animes []model.ACG) *linebot.CarouselContainer {
+	container := &linebot.CarouselContainer{
+		Type:     linebot.FlexContainerTypeCarousel,
+		Contents: buildFlexContainersTypeBubble(animes),
+	}
+	return container
+}
+
+func buildFlexContainersTypeBubble(animes []model.ACG) []*linebot.BubbleContainer {
+	var containers []*linebot.BubbleContainer
+	for _, anime := range animes {
+		containers = append(containers, buildFlexMessageWithAnime(anime))
+	}
+	return containers
 }
 
 func buildFlexMessageWithAnimers(animes []model.ACG) []*linebot.FlexMessage {

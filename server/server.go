@@ -18,7 +18,6 @@ func AnimeBotServer() *gin.Engine {
 	server := gin.Default()
 	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
 	model.ConnectDataBase(dbname)
-
 	var err error
 	bot, err = linebot.New(os.Getenv("ChannelSecret"), os.Getenv("ChannelAccessToken"))
 	if err == nil {

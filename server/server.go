@@ -16,7 +16,7 @@ func AnimeBotServer() *gin.Engine {
 	server := gin.Default()
 	var err error
 	bot, err = linebot.New(os.Getenv("ChannelSecret"), os.Getenv("ChannelAccessToken"))
-	if err != nil {
+	if err == nil {
 		log.Println("line bot linking successfully!")
 	}
 

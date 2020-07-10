@@ -7,57 +7,61 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 type ACG struct {
-	Image    string `gorm:"size:150;"`                       // 首頁影像圖片網址
-	TaiName  string `gorm:"primary_key; size:55; not null;"` // 動畫台灣翻譯名稱
-	JapName  string `gorm:"size:55; not null;"`              // 動畫日文原名
-	Class    string `gorm:"size:5;"`                         // 動畫種類(電影or番)
-	Premiere string `gorm:"size30;"`                         // 首播時間
-	Author   string `gorm:"size:15;"`                        // 原著作者
-	Director string `gorm:"size:15;"`                        // 導演監督
-	Firm     string `gorm:"size:10;"`                        // 製作廠商
-	Agent    string `gorm:"size:10;"`                        // 台灣代理
-	Website  string `gorm:"size:150;"`                       // 官方網站
+	SearchIndex string `gorm:"size:50;"`                        // 動漫編號
+	Image       string `gorm:"size:150;"`                       // 首頁影像圖片網址
+	TaiName     string `gorm:"primary_key; size:90; not null;"` // 動畫台灣翻譯名稱
+	JapName     string `gorm:"size:90; not null;"`              // 動畫日文原名
+	Class       string `gorm:"size:60;"`                        // 動畫種類(電影or番)
+	Premiere    string `gorm:"size:60;"`                        // 首播時間
+	Author      string `gorm:"size:60;"`                        // 原著作者
+	Director    string `gorm:"size:60;"`                        // 導演監督
+	Firm        string `gorm:"size:60;"`                        // 製作廠商
+	Agent       string `gorm:"size:60;"`                        // 台灣代理
+	Website     string `gorm:"size:150;"`                       // 官方網站
+}
+
+func PostgresExec(command string) {
+	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	ConnectDataBase(dbname)
+	result := DB.Exec(command)
+	fmt.Println(result)
 }
 
 func CreateACGTable() {
-	dname := fmt.Sprintf("%s:%s@(%s)/Animers?charset=utf8&parseTime=True&loc=Local", os.Getenv("account"), os.Getenv("password"), os.Getenv("IP"))
-	fmt.Println(dname)
-	ConnectDataBase(dname)
+	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	ConnectDataBase(dbname)
+	//DB.CreateTable(&ACG{})
+	if DB.HasTable(&ACG{}) {
+		DB.DropTable("acgs")
+	}
 	DB.CreateTable(&ACG{})
 }
 
 // 建立動漫的資料庫
 // https://acg.gamer.com.tw/index.php?page=2&p=ANIME&t=1&tnum=5406
 func CrewAnimerInfo() {
-	db := fmt.Sprintf("%s:%s@(%s)/Animers?charset=utf8&parseTime=True&loc=Local", os.Getenv("account"), os.Getenv("password"), os.Getenv("IP"))
+	db := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
 	ConnectDataBase(db)
-
-	// wg1 := new(sync.WaitGroup)
-	// wg1.Add(404)
 
 	for i := 1; i <= 404; i++ {
 		url := fmt.Sprintf("https://acg.gamer.com.tw/index.php?page=%d&p=ANIME&t=1&tnum=5406", i)
-		// go func() {
-		// 	urls := CrewSinglePage(url, wg1)
-		// 	CrewEachAnime(urls)
-		// }()
 		urls := CrewSinglePage(url)
 		CrewEachAnime(urls)
-
 		// 每爬一頁睡十二秒
-		time.Sleep(6 * time.Second)
+		time.Sleep(3 * time.Second)
 	}
 	// wg1.Wait()
-
 }
 
 func CrewSinglePage(url string) []string {
@@ -74,40 +78,61 @@ func CrewSinglePage(url string) []string {
 	return urls
 }
 
+func CheckColonExist(str string) string {
+	if val := strings.Split(str, "："); len(val) >= 2 {
+		return val[1]
+	}
+	return str
+}
+
 func CrewEachAnime(urls []string) {
-	for _, url := range urls {
+	for _, _url := range urls {
 		var acg ACG
-		dom, _ := getDecument(url)
+		parse, _ := url.Parse(_url)
+		values, _ := url.ParseQuery(parse.RawQuery)
+		// url query search number
+		acg.SearchIndex = values.Get("s")
+
+		dom, _ := getDecument(_url)
 		s := dom.Find("div.ACG-mster_box1").First()
 		acg.Image, _ = s.Find("img").Attr("src")
 		acg.TaiName = s.Find("h1").First().Text()
 		acg.JapName = s.Find("h2").First().Text()
-		acg.Class = s.Find("ul.ACG-box1listA>li:contains(播映方式)").First().Text()
-		acg.Premiere = s.Find("ul.ACG-box1listA>li:contains(當地首播)").First().Text()
+		acg.Class = CheckColonExist(s.Find("ul.ACG-box1listA>li:contains(播映方式)").First().Text())
+		acg.Premiere = CheckColonExist(s.Find("ul.ACG-box1listA>li:contains(當地首播)").First().Text())
+
 		s.Find("ul.ACG-box1listB>li").Each(func(idx int, ss *goquery.Selection) {
 			switch idx {
 			case 0:
-				acg.Author = ss.Text()
+				// 爬取作者欄位
+				acg.Author = CheckColonExist(ss.Text())
 			case 1:
-				acg.Director = ss.Text()
+				// 爬取監督欄位
+				acg.Director = CheckColonExist(ss.Text())
 			case 2:
-				acg.Firm = ss.Text()
+				// 爬取製作廠商
+				acg.Firm = CheckColonExist(ss.Text())
 			case 3:
-				acg.Agent = ss.Text()
+				// 爬取台灣代理
+				acg.Agent = CheckColonExist(ss.Text())
 			case 4:
+				// 爬取官方網站
 				acg.Website = ss.Find("a").Text()
 			}
 		})
 		log.Println(acg)
-		time.Sleep(time.Second * 1)
+		time.Sleep(1 * time.Second)
 		DB.Create(&acg)
 	}
 }
 
-func CrewEachAnimeTest(url string) {
+func CrewEachAnimeTest(_url string) {
 	var acg ACG
+	parse, _ := url.Parse(_url)
+	values, _ := url.ParseQuery(parse.RawQuery)
+	acg.SearchIndex = values.Get("")
 
-	dom, _ := getDecument(url)
+	dom, _ := getDecument(_url)
 	s := dom.Find("div.ACG-mster_box1").First()
 	acg.Image, _ = s.Find("img").Attr("src")
 	acg.TaiName = s.Find("h1").First().Text()
@@ -167,4 +192,22 @@ func getDecument(url string) (*goquery.Document, error) {
 		return nil, err
 	}
 	return dom, nil
+}
+
+func GetAnimeInfo(_url string) (ACG, error) {
+	var anime ACG
+	parse, err := url.Parse(_url)
+	if err != nil {
+		return anime, err
+	}
+
+	values, err := url.ParseQuery(parse.RawQuery)
+	if err != nil {
+		return anime, err
+	}
+
+	searchidx := values.Get("s")
+
+	DB.Where("SearchIndex = ?", searchidx).First(&anime)
+	return anime, nil
 }

@@ -176,11 +176,11 @@ func replyFlexMessage(animeName string) *linebot.BubbleContainer {
 					Style: linebot.FlexButtonStyleTypePrimary,
 					Color: "#f7af31",
 					Action: &linebot.MessageAction{
-						Label: "按鈕2",
-						Text:  "按鈕2測試",
+						Label: "按鈕1",
+						Text:  "按鈕1測試",
 					},
 				},
-				&linebot.SpacerComponent{},
+				&linebot.FillerComponent{},
 				&linebot.ButtonComponent{
 					Type:  linebot.FlexComponentTypeButton,
 					Style: linebot.FlexButtonStyleTypePrimary,

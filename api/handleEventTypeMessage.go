@@ -54,8 +54,9 @@ func replyFlexMessage(animeName string) *linebot.BubbleContainer {
 	container := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
-			URL:  "https://p2.bahamut.com.tw/B/ACG/c/96/0000110596.JPG",
-			Size: linebot.FlexImageSizeTypeFull,
+			URL: "https://p2.bahamut.com.tw/B/ACG/c/96/0000110596.JPG",
+			//Size: linebot.FlexImageSizeTypeFull,
+			Size: linebot.FlexImageSizeType5xl,
 		},
 		Body: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,
@@ -134,7 +135,7 @@ func replyFlexMessage(animeName string) *linebot.BubbleContainer {
 							Contents: []linebot.FlexComponent{
 								&linebot.TextComponent{
 									Type:  linebot.FlexComponentTypeText,
-									Text:  "製作廠商",
+									Text:  "作畫公司",
 									Size:  linebot.FlexTextSizeTypeSm,
 									Color: "#f7af31",
 								},
@@ -179,6 +180,7 @@ func replyFlexMessage(animeName string) *linebot.BubbleContainer {
 						Text:  "按鈕2測試",
 					},
 				},
+				&linebot.SpacerComponent{},
 				&linebot.ButtonComponent{
 					Type:  linebot.FlexComponentTypeButton,
 					Style: linebot.FlexButtonStyleTypePrimary,

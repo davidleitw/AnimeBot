@@ -13,6 +13,7 @@ import (
 func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
+		log.Println("Input text: ", message.Text)
 		if message.Text == "!help" || message.Text == "-h" || message.Text == "-help" {
 			// 功能講解
 			_, err := bot.ReplyMessage(

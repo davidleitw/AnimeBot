@@ -208,6 +208,12 @@ func GetAnimeInfo(_url string) (ACG, error) {
 
 	searchidx := values.Get("s")
 
-	DB.Where("SearchIndex = ?", searchidx).First(&anime)
+	DB.Where("search_index = ?", searchidx).First(&anime)
 	return anime, nil
+}
+
+func SearchAnimeInfoWithKey(key string) []ACG {
+	var animes []ACG
+	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(5).Find(&animes)
+	return animes
 }

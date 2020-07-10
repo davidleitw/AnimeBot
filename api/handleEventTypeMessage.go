@@ -52,9 +52,11 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			// 搜尋單一動漫
 			split := string(message.Text[0])
 			name := strings.Split(message.Text, split)[1]
+			animes := model.SearchAnimeInfoWithKey(name)
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
-				linebot.NewTextMessage("作品名稱: "+name),
+				linebot.NewFlexMessage("flex", buildFlexMessageWithAnime(animes[0])),
+				linebot.NewFlexMessage("flex", buildFlexMessageWithAnime(animes[1])),
 			).Do()
 			if err != nil {
 				log.Println("Send search response error = ", err)
@@ -71,11 +73,20 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 	}
 }
 
-func buildFlexMessageWithAnime(animeInfo model.ACG) *linebot.BubbleContainer {
+func buildFlexMessageWithAnimers(animes []model.ACG) []*linebot.FlexMessage {
+	var containers []*linebot.FlexMessage
+	for _, anime := range animes {
+		flex := buildFlexMessageWithAnime(anime)
+		containers = append(containers, linebot.NewFlexMessage("flex", flex))
+	}
+	return containers
+}
+
+func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
 	container := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
-			URL: animeInfo.Image,
+			URL: anime.Image,
 			//Size: linebot.FlexImageSizeTypeFull,
 			Size: linebot.FlexImageSizeType5xl,
 		},
@@ -92,7 +103,7 @@ func buildFlexMessageWithAnime(animeInfo model.ACG) *linebot.BubbleContainer {
 					Contents: []linebot.FlexComponent{
 						&linebot.TextComponent{
 							Type:   linebot.FlexComponentTypeText,
-							Text:   animeInfo.TaiName,
+							Text:   anime.TaiName,
 							Wrap:   true,
 							Weight: linebot.FlexTextWeightTypeBold,
 							Size:   linebot.FlexTextSizeTypeXl,
@@ -101,7 +112,7 @@ func buildFlexMessageWithAnime(animeInfo model.ACG) *linebot.BubbleContainer {
 						},
 						&linebot.TextComponent{
 							Type: linebot.FlexComponentTypeText,
-							Text: animeInfo.JapName,
+							Text: anime.JapName,
 							Size: linebot.FlexTextSizeTypeXs,
 							Wrap: true,
 						},
@@ -125,7 +136,7 @@ func buildFlexMessageWithAnime(animeInfo model.ACG) *linebot.BubbleContainer {
 								},
 								&linebot.TextComponent{
 									Type:  linebot.FlexComponentTypeText,
-									Text:  animeInfo.Premiere,
+									Text:  anime.Premiere,
 									Size:  linebot.FlexTextSizeTypeSm,
 									Color: "#111111",
 									Align: linebot.FlexComponentAlignTypeEnd,
@@ -144,7 +155,7 @@ func buildFlexMessageWithAnime(animeInfo model.ACG) *linebot.BubbleContainer {
 								},
 								&linebot.TextComponent{
 									Type:  linebot.FlexComponentTypeText,
-									Text:  animeInfo.Author,
+									Text:  anime.Author,
 									Size:  linebot.FlexTextSizeTypeSm,
 									Color: "#111111",
 									Align: linebot.FlexComponentAlignTypeEnd,
@@ -163,7 +174,7 @@ func buildFlexMessageWithAnime(animeInfo model.ACG) *linebot.BubbleContainer {
 								},
 								&linebot.TextComponent{
 									Type:  linebot.FlexComponentTypeText,
-									Text:  animeInfo.Firm,
+									Text:  anime.Firm,
 									Size:  linebot.FlexTextSizeTypeSm,
 									Color: "#111111",
 									Align: linebot.FlexComponentAlignTypeEnd,
@@ -182,7 +193,7 @@ func buildFlexMessageWithAnime(animeInfo model.ACG) *linebot.BubbleContainer {
 								},
 								&linebot.TextComponent{
 									Type:  linebot.FlexComponentTypeText,
-									Text:  animeInfo.Website,
+									Text:  anime.Website,
 									Size:  linebot.FlexTextSizeTypeSm,
 									Color: "#111111",
 									Align: linebot.FlexComponentAlignTypeEnd,

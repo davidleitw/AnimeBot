@@ -72,6 +72,7 @@ func replyFlexMessage(animeName string) *linebot.BubbleContainer {
 						&linebot.TextComponent{
 							Type:   linebot.FlexComponentTypeText,
 							Text:   "刀劍神域 Alicization War of Underworld -THE LAST SEASON-",
+							Wrap:   true,
 							Weight: linebot.FlexTextWeightTypeBold,
 							Size:   linebot.FlexTextSizeTypeXl,
 							Margin: linebot.FlexComponentMarginTypeMd,
@@ -179,8 +180,8 @@ func replyFlexMessage(animeName string) *linebot.BubbleContainer {
 						Label: "按鈕1",
 						Text:  "按鈕1測試",
 					},
+					Margin: linebot.FlexComponentMarginTypeXxl,
 				},
-				&linebot.FillerComponent{},
 				&linebot.ButtonComponent{
 					Type:  linebot.FlexComponentTypeButton,
 					Style: linebot.FlexButtonStyleTypePrimary,
@@ -189,6 +190,7 @@ func replyFlexMessage(animeName string) *linebot.BubbleContainer {
 						Label: "按鈕2",
 						Text:  "按鈕2測試",
 					},
+					Margin: linebot.FlexComponentMarginTypeXxl,
 				},
 			},
 		},

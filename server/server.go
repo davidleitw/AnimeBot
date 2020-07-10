@@ -1,11 +1,13 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/davidleitw/AnimeBot/api"
+	"github.com/davidleitw/AnimeBot/model"
 	"github.com/gin-gonic/gin"
 	"github.com/line/line-bot-sdk-go/linebot"
 )
@@ -14,12 +16,14 @@ var bot *linebot.Client
 
 func AnimeBotServer() *gin.Engine {
 	server := gin.Default()
+	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	model.ConnectDataBase(dbname)
+
 	var err error
 	bot, err = linebot.New(os.Getenv("ChannelSecret"), os.Getenv("ChannelAccessToken"))
 	if err == nil {
 		log.Println("line bot linking successfully!")
 	}
-
 	server.POST("/callback", callbackHandler)
 	return server
 }

@@ -217,3 +217,9 @@ func SearchAnimeInfoWithKey(key string) []ACG {
 	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(5).Find(&animes)
 	return animes
 }
+
+func TestSql(key string) []ACG {
+	var animes []ACG
+	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(5).Find(&animes)
+	return animes
+}

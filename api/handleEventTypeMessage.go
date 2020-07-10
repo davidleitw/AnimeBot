@@ -167,7 +167,6 @@ func replyFlexMessage(animeName string) *linebot.BubbleContainer {
 							},
 						},
 						&linebot.SpacerComponent{},
-						&linebot.SpacerComponent{},
 					},
 					Margin: linebot.FlexComponentMarginTypeNone,
 				},

@@ -3,7 +3,6 @@ package api
 import (
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/davidleitw/AnimeBot/model"
 
@@ -54,11 +53,9 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 
 		} else if (message.Text[0] == '@' || message.Text[0] == '!') && len(message.Text) >= 2 {
 			// 搜尋單一動漫
-
-			split := string(message.Text[0])
-			name := strings.Split(message.Text, split)[1]
-			animes := model.SearchAnimeInfoWithKey(name)
-			log.Printf("search area!, split string is %s, and search anime name is %s", split, name)
+			// split := string(message.Text[0])
+			// name := strings.Split(message.Text, split)[1]
+			animes := model.SearchAnimeInfoWithKey(message.Text[1:])
 			if len(animes) > 0 {
 				flex := buildFlexContainerTypeCarousel(animes)
 				_, err := bot.ReplyMessage(

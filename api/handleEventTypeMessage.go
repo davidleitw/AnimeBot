@@ -32,6 +32,28 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			if err != nil {
 				log.Println("Testing error = ", err)
 			}
+		} else if (message.Text[0] == '@' || message.Text[0] == '!') && len(message.Text) >= 2 {
+			// 搜尋單一動漫
+			animes := model.SearchAnimeInfoWithKey(message.Text[1:])
+			if len(animes) > 0 {
+				flex := buildFlexContainerTypeCarousel(animes)
+				_, err := bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewFlexMessage("flex", flex),
+				).Do()
+				if err != nil {
+					log.Println("Send search response error = ", err)
+				}
+			} else {
+				_, err := bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewTextMessage("對不起, 您輸入的關鍵字無法查詢到結果, 請確認輸入的文字是否正確"),
+				).Do()
+				if err != nil {
+					log.Println("search zero statment error!")
+				}
+			}
+
 		} else if strings.Contains(message.Text, "https") {
 			// 以巴哈姆特網址查詢
 			log.Println("https area!")
@@ -53,28 +75,6 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 				).Do()
 				if err != nil {
 					log.Println("Send search response error = ", err)
-				}
-			}
-
-		} else if (message.Text[0] == '@' || message.Text[0] == '!') && len(message.Text) >= 2 {
-			// 搜尋單一動漫
-			animes := model.SearchAnimeInfoWithKey(message.Text[1:])
-			if len(animes) > 0 {
-				flex := buildFlexContainerTypeCarousel(animes)
-				_, err := bot.ReplyMessage(
-					event.ReplyToken,
-					linebot.NewFlexMessage("flex", flex),
-				).Do()
-				if err != nil {
-					log.Println("Send search response error = ", err)
-				}
-			} else {
-				_, err := bot.ReplyMessage(
-					event.ReplyToken,
-					linebot.NewTextMessage("對不起, 您輸入的關鍵字無法查詢到結果, 請確認輸入的文字是否正確"),
-				).Do()
-				if err != nil {
-					log.Println("search zero statment error!")
 				}
 			}
 

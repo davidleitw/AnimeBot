@@ -16,6 +16,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 		log.Println("Input text: ", message.Text)
 		if message.Text == "!help" || message.Text == "-h" || message.Text == "-help" {
 			// 功能講解
+			log.Println("help area!")
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewTextMessage("Help message: Help!"),
@@ -24,6 +25,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 				log.Println("!help message error = ", err)
 			}
 		} else if message.Text == "測試" {
+			log.Println("test area!")
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewFlexMessage("Flex", replyFlexMessageTest("測試")),
@@ -33,6 +35,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			}
 		} else if message.Text[:5] == "https" {
 			// 以巴哈姆特網址查詢
+			log.Println("https area!")
 			var anime model.ACG
 			var err error
 			anime, err = model.GetAnimeInfo(message.Text)
@@ -51,6 +54,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 
 		} else if (message.Text[0] == '@' || message.Text[0] == '!') && len(message.Text) >= 2 {
 			// 搜尋單一動漫
+			log.Println("search area!")
 			split := string(message.Text[0])
 			name := strings.Split(message.Text, split)[1]
 			animes := model.SearchAnimeInfoWithKey(name)
@@ -74,6 +78,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			}
 
 		} else {
+			log.Println("else area!")
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewTextMessage("Anime Bot: "+message.Text),

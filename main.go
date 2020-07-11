@@ -16,7 +16,7 @@ func main() {
 	}
 	// dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
 	// model.ConnectDataBase(dbname)
-	// a := model.TestSql("刀劍")
+	// a := model.TestSql("命運")
 	// for _, val := range a {
 	// 	fmt.Println(val)
 	// }

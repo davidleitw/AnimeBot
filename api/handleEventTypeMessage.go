@@ -54,11 +54,11 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 
 		} else if (message.Text[0] == '@' || message.Text[0] == '!') && len(message.Text) >= 2 {
 			// 搜尋單一動漫
-			log.Println("search area!")
+
 			split := string(message.Text[0])
 			name := strings.Split(message.Text, split)[1]
 			animes := model.SearchAnimeInfoWithKey(name)
-
+			log.Printf("search area!, split string is %s, and search anime name is %s", split, name)
 			if len(animes) <= 0 {
 				_, err := bot.ReplyMessage(
 					event.ReplyToken,

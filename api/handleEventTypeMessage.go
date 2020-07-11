@@ -2,6 +2,7 @@ package api
 
 import (
 	"log"
+	"strings"
 
 	"github.com/davidleitw/AnimeBot/model"
 
@@ -31,7 +32,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			if err != nil {
 				log.Println("Testing error = ", err)
 			}
-		} else if message.Text[:5] == "https" {
+		} else if strings.Contains(message.Text, "https") {
 			// 以巴哈姆特網址查詢
 			log.Println("https area!")
 			anime, err := model.SearchAnimeInfoWithindex(message.Text)

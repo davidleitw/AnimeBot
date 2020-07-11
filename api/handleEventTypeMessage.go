@@ -107,17 +107,7 @@ func buildFlexContainersTypeBubble(animes []model.ACG) []*linebot.BubbleContaine
 	return containers
 }
 
-func buildFlexMessageWithAnimers(animes []model.ACG) []*linebot.FlexMessage {
-	var containers []*linebot.FlexMessage
-	for _, anime := range animes {
-		flex := buildFlexMessageWithAnime(anime)
-		containers = append(containers, linebot.NewFlexMessage("flex", flex))
-	}
-	return containers
-}
-
 func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
-
 	container := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{

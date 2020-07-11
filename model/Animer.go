@@ -130,7 +130,7 @@ func CrewEachAnimeTest(_url string) {
 	var acg ACG
 	parse, _ := url.Parse(_url)
 	values, _ := url.ParseQuery(parse.RawQuery)
-	acg.SearchIndex = values.Get("")
+	acg.SearchIndex = values.Get("s")
 
 	dom, _ := getDecument(_url)
 	s := dom.Find("div.ACG-mster_box1").First()
@@ -215,8 +215,40 @@ func GetAnimeInfo(_url string) (ACG, error) {
 func SearchAnimeInfoWithKey(key string) []ACG {
 	var animes []ACG
 	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(10).Find(&animes)
-	for _, anime := range animes {
-		log.Println(anime)
+	for idx := 0; idx < len(animes); idx++ {
+		if len(animes[idx].Agent) == 0 {
+			animes[idx].Agent = "nil"
+		}
+		if len(animes[idx].Author) == 0 {
+			animes[idx].Author = "nil"
+		}
+		if len(animes[idx].Class) == 0 {
+			animes[idx].Class = "nil"
+		}
+		if len(animes[idx].Director) == 0 {
+			animes[idx].Director = "nil"
+		}
+		if len(animes[idx].Firm) == 0 {
+			animes[idx].Firm = "nil"
+		}
+		if len(animes[idx].Image) == 0 {
+			animes[idx].Image = "nil"
+		}
+		if len(animes[idx].JapName) == 0 {
+			animes[idx].JapName = "nil"
+		}
+		if len(animes[idx].Premiere) == 0 {
+			animes[idx].Premiere = "nil"
+		}
+		if len(animes[idx].SearchIndex) == 0 {
+			animes[idx].SearchIndex = "nil"
+		}
+		if len(animes[idx].TaiName) == 0 {
+			animes[idx].TaiName = "nil"
+		}
+		if len(animes[idx].Website) == 0 {
+			animes[idx].Website = "nil"
+		}
 	}
 	return animes
 }
@@ -224,8 +256,40 @@ func SearchAnimeInfoWithKey(key string) []ACG {
 func TestSql(key string) []ACG {
 	var animes []ACG
 	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(10).Find(&animes)
+	for idx := 0; idx < len(animes); idx++ {
+		if len(animes[idx].Agent) == 0 {
+			animes[idx].Agent = "nil"
+		}
+		if len(animes[idx].Author) == 0 {
+			animes[idx].Author = "nil"
+		}
+		if len(animes[idx].Class) == 0 {
+			animes[idx].Class = "nil"
+		}
+		if len(animes[idx].Director) == 0 {
+			animes[idx].Director = "nil"
+		}
+		if len(animes[idx].Firm) == 0 {
+			animes[idx].Firm = "nil"
+		}
+		if len(animes[idx].Image) == 0 {
+			animes[idx].Image = "nil"
+		}
+		if len(animes[idx].JapName) == 0 {
+			animes[idx].JapName = "nil"
+		}
+		if len(animes[idx].Premiere) == 0 {
+			animes[idx].Premiere = "nil"
+		}
+		if len(animes[idx].SearchIndex) == 0 {
+			animes[idx].SearchIndex = "nil"
+		}
+		if len(animes[idx].TaiName) == 0 {
+			animes[idx].TaiName = "nil"
+		}
+		if len(animes[idx].Website) == 0 {
+			animes[idx].Website = "nil"
+		}
+	}
 	return animes
-}
-
-func verifyAnime(anime *ACG) {
 }

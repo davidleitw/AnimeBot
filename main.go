@@ -14,10 +14,11 @@ func main() {
 	if err != nil {
 		fmt.Println("Server running error: ", err)
 	}
-	// dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
-	// model.ConnectDataBase(dbname)
-	// a := model.TestSql("命運")
-	// for _, val := range a {
-	// 	fmt.Println(val)
-	// }
+	// 	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	// 	model.ConnectDataBase(dbname)
+	// 	a := model.TestSql("原子")
+	// 	fmt.Println("\n")
+	// 	for _, val := range a {
+	// 		fmt.Println(val.JapName, "=> len: ", len(val.JapName))
+	// 	}
 }

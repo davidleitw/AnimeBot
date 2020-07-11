@@ -59,21 +59,22 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			name := strings.Split(message.Text, split)[1]
 			animes := model.SearchAnimeInfoWithKey(name)
 			log.Printf("search area!, split string is %s, and search anime name is %s", split, name)
-			if len(animes) <= 0 {
+			if len(animes) > 0 {
+				flex := buildFlexContainerTypeCarousel(animes)
+				_, err := bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewFlexMessage("flex", flex),
+				).Do()
+				if err != nil {
+					log.Println("Send search response error = ", err)
+				}
+			} else {
 				_, err := bot.ReplyMessage(
 					event.ReplyToken,
 					linebot.NewTextMessage("對不請, 您輸入的關鍵字無法查詢到結果, 請確認輸入的文字是否正確"),
 				).Do()
 				if err != nil {
 					log.Println("search zero statment error!")
-				}
-			} else {
-				_, err := bot.ReplyMessage(
-					event.ReplyToken,
-					linebot.NewFlexMessage("flex", buildFlexContainerTypeCarousel(animes)),
-				).Do()
-				if err != nil {
-					log.Println("Send search response error = ", err)
 				}
 			}
 
@@ -116,11 +117,11 @@ func buildFlexMessageWithAnimers(animes []model.ACG) []*linebot.FlexMessage {
 }
 
 func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
+
 	container := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
-			URL: anime.Image,
-			//Size: linebot.FlexImageSizeTypeFull,
+			URL:  anime.Image,
 			Size: linebot.FlexImageSizeType5xl,
 		},
 		Body: &linebot.BoxComponent{

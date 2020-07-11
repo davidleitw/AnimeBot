@@ -215,6 +215,9 @@ func GetAnimeInfo(_url string) (ACG, error) {
 func SearchAnimeInfoWithKey(key string) []ACG {
 	var animes []ACG
 	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(10).Find(&animes)
+	for _, anime := range animes {
+		log.Println(anime)
+	}
 	return animes
 }
 
@@ -222,4 +225,7 @@ func TestSql(key string) []ACG {
 	var animes []ACG
 	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(10).Find(&animes)
 	return animes
+}
+
+func verifyAnime(anime *ACG) {
 }

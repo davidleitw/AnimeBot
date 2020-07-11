@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/davidleitw/AnimeBot/model"
@@ -35,26 +34,29 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 		} else if message.Text[:5] == "https" {
 			// 以巴哈姆特網址查詢
 			log.Println("https area!")
-			var anime model.ACG
-			var err error
-			anime, err = model.GetAnimeInfo(message.Text)
+			anime, err := model.SearchAnimeInfoWithindex(message.Text)
 			if err != nil {
-				// Build error flex message to user
-				fmt.Println(err)
-			}
-
-			_, err = bot.ReplyMessage(
-				event.ReplyToken,
-				linebot.NewFlexMessage("Flex", replyFlexMessageTest(anime.TaiName)),
-			).Do()
-			if err != nil {
-				log.Println(err)
+				// 沒有搜尋到
+				_, err := bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewTextMessage("對不起, 您輸入的網址無法查詢到結果, 請確認輸入的網址是否正確"),
+				).Do()
+				if err != nil {
+					log.Println("search zero statment error!")
+				}
+			} else {
+				flex := buildFlexContainerTypeCarouselSingle(anime)
+				_, err := bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewFlexMessage("flex", flex),
+				).Do()
+				if err != nil {
+					log.Println("Send search response error = ", err)
+				}
 			}
 
 		} else if (message.Text[0] == '@' || message.Text[0] == '!') && len(message.Text) >= 2 {
 			// 搜尋單一動漫
-			// split := string(message.Text[0])
-			// name := strings.Split(message.Text, split)[1]
 			animes := model.SearchAnimeInfoWithKey(message.Text[1:])
 			if len(animes) > 0 {
 				flex := buildFlexContainerTypeCarousel(animes)
@@ -68,7 +70,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			} else {
 				_, err := bot.ReplyMessage(
 					event.ReplyToken,
-					linebot.NewTextMessage("對不請, 您輸入的關鍵字無法查詢到結果, 請確認輸入的文字是否正確"),
+					linebot.NewTextMessage("對不起, 您輸入的關鍵字無法查詢到結果, 請確認輸入的文字是否正確"),
 				).Do()
 				if err != nil {
 					log.Println("search zero statment error!")
@@ -86,6 +88,15 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			}
 		}
 	}
+}
+func buildFlexContainerTypeCarouselSingle(anime model.ACG) *linebot.CarouselContainer {
+	container := &linebot.CarouselContainer{
+		Type: linebot.FlexContainerTypeCarousel,
+		Contents: []*linebot.BubbleContainer{
+			buildFlexMessageWithAnime(anime),
+		},
+	}
+	return container
 }
 
 func buildFlexContainerTypeCarousel(animes []model.ACG) *linebot.CarouselContainer {

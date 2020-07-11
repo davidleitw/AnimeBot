@@ -212,6 +212,54 @@ func GetAnimeInfo(_url string) (ACG, error) {
 	return anime, nil
 }
 
+func SearchAnimeInfoWithindex(_url string) (ACG, error) {
+	var anime ACG
+	parse, _ := url.Parse(_url)
+
+	values, _ := url.ParseQuery(parse.RawQuery)
+	index := values.Get("s")
+	err := DB.Where("search_index = ?", index).First(&anime).Error
+	if err != nil {
+		return anime, err
+	}
+
+	if len(anime.Agent) == 0 {
+		anime.Agent = "nil"
+	}
+	if len(anime.Author) == 0 {
+		anime.Author = "nil"
+	}
+	if len(anime.Class) == 0 {
+		anime.Class = "nil"
+	}
+	if len(anime.Director) == 0 {
+		anime.Director = "nil"
+	}
+	if len(anime.Firm) == 0 {
+		anime.Firm = "nil"
+	}
+	if len(anime.Image) == 0 {
+		anime.Image = "nil"
+	}
+	if len(anime.JapName) == 0 {
+		anime.JapName = "nil"
+	}
+	if len(anime.Premiere) == 0 {
+		anime.Premiere = "nil"
+	}
+	if len(anime.SearchIndex) == 0 {
+		anime.SearchIndex = "nil"
+	}
+	if len(anime.TaiName) == 0 {
+		anime.TaiName = "nil"
+	}
+	if len(anime.Website) == 0 {
+		anime.Website = "nil"
+	}
+
+	return anime, nil
+}
+
 func SearchAnimeInfoWithKey(key string) []ACG {
 	var animes []ACG
 	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(10).Find(&animes)

@@ -48,6 +48,7 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 	case "show":
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
+
 		if len(users) == 0 {
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
@@ -110,6 +111,7 @@ func buildFlexContainBubbles(users []model.User) []*linebot.BubbleContainer {
 		var anime model.ACG
 		search_index := user.SearchIndex
 		model.DB.Where("search_index = ?", search_index).First(&anime)
+		model.VerifyAnime(&anime)
 		containers = append(containers, buildFlexContainCarouselwithItem(anime))
 	}
 	return containers

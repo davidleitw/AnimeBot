@@ -244,8 +244,9 @@ func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
 					Style: linebot.FlexButtonStyleTypePrimary,
 					Color: "#f7af31",
 					Action: &linebot.PostbackAction{
-						Label: "添加至欲觀看清單",
-						Data:  anime.SearchIndex + "&action=add", // 添加指定的動漫所需要的編號
+						Label:       "添加至欲觀看清單",
+						Data:        anime.SearchIndex + "&action=add", // 添加指定的動漫所需要的編號
+						DisplayText: "加入清單",
 					},
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},

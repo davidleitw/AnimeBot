@@ -6,8 +6,8 @@ import (
 )
 
 type User struct {
-	UserID      string `gorm:"primary_key;"`
-	SearchIndex string `gorm:"size:50;"`
+	UserID      string `gorm:"primary_key; size:50;"`
+	SearchIndex string `gorm:"primary_key; size:50;"`
 }
 
 func CreateUserTable() {

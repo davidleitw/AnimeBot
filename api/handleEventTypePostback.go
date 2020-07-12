@@ -35,8 +35,6 @@ func handleAddItem(userID, search string) {
 	var user model.User
 	user.UserID = userID
 	user.SearchIndex = search
-
-	model.DB.Create(&user)
 	model.DB.Create(&user)
 }
 

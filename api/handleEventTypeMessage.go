@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -254,9 +255,9 @@ func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
 					Type:  linebot.FlexComponentTypeButton,
 					Style: linebot.FlexButtonStyleTypePrimary,
 					Color: "#f7af31",
-					Action: &linebot.MessageAction{
-						Label: "按鈕2",
-						Text:  "按鈕2測試",
+					Action: &linebot.URIAction{
+						Label: "詳細資料",
+						URI:   fmt.Sprintf("https://acg.gamer.com.tw/acgDetail.php?s=%s", anime.SearchIndex),
 					},
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},

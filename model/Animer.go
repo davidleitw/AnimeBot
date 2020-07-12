@@ -260,6 +260,7 @@ func SearchAnimeInfoWithindex(_url string) (ACG, error) {
 	return anime, nil
 }
 
+// 如果該作品有欄位為空, 填入nil以便於flex可以正常運作
 func SearchAnimeInfoWithKey(key string) []ACG {
 	var animes []ACG
 	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(10).Find(&animes)

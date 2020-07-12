@@ -31,7 +31,7 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		handleDeleteItem(userID, search)
 	case "show":
 		var users []model.User
-		model.DB.Where("user_id = ?", users)
+		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
 		if len(users) == 0 {
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,

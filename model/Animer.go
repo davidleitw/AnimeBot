@@ -41,10 +41,10 @@ func PostgresExec(command string) {
 func CreateACGTable() {
 	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
 	ConnectDataBase(dbname)
-	//DB.CreateTable(&ACG{})
-	if DB.HasTable(&ACG{}) {
-		DB.DropTable("acgs")
-	}
+	// 如果要洗掉資料庫重來 把這邊註解刪掉
+	// if DB.HasTable(&ACG{}) {
+	// 	DB.DropTable("acgs")
+	// }
 	DB.CreateTable(&ACG{})
 }
 

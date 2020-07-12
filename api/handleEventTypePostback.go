@@ -28,7 +28,17 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 			}
 		}
 	case "delete":
-		handleDeleteItem(userID, search)
+		err := handleDeleteItem(userID, search)
+		if err != nil {
+			_, replyerr := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewTextMessage("刪除成功!"),
+			).Do()
+			// 發送新增成功訊息錯誤時會跳到下面這行
+			if replyerr != nil {
+				log.Println("Add data result show error = ", replyerr)
+			}
+		}
 	case "show":
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
@@ -71,8 +81,12 @@ func handleAddItem(userID, search string) error {
 	return err
 }
 
-func handleDeleteItem(userID, search string) {
-
+func handleDeleteItem(userID, search string) error {
+	var user model.User
+	user.UserID = userID
+	user.SearchIndex = search
+	err := model.DB.Delete(&user).Error
+	return err
 }
 
 func handleShowlist(users []model.User) *linebot.CarouselContainer {

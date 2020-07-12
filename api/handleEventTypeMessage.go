@@ -36,7 +36,31 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 				log.Println("Testing error = ", err)
 			}
 		} else if message.Text == "@清單" {
-			linebot.NewPostbackAction("觀看清單", "000000&action=show", "show", "顯示清單")
+			_, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewFlexMessage("flex", &linebot.BubbleContainer{
+					Type: linebot.FlexContainerTypeBubble,
+					Footer: &linebot.BoxComponent{
+						Type:   linebot.FlexComponentTypeBox,
+						Layout: linebot.FlexBoxLayoutTypeVertical,
+						Contents: []linebot.FlexComponent{
+							&linebot.ButtonComponent{
+								Type:  linebot.FlexComponentTypeButton,
+								Style: linebot.FlexButtonStyleTypePrimary,
+								Color: "#f7af31",
+								Action: &linebot.PostbackAction{
+									Label:       "顯示清單",
+									Data:        "000000&action=show",
+									DisplayText: "顯示清單",
+								},
+							},
+						},
+					},
+				}),
+			).Do()
+			if err != nil {
+				log.Println("Testing error = ", err)
+			}
 		} else if (message.Text[0] == '@' || message.Text[0] == '!') && len(message.Text) >= 2 {
 			// 搜尋單一動漫
 			animes := model.SearchAnimeInfoWithKey(message.Text[1:])

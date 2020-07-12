@@ -49,9 +49,8 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 								Style: linebot.FlexButtonStyleTypePrimary,
 								Color: "#f7af31",
 								Action: &linebot.PostbackAction{
-									Label:       "顯示清單",
-									Data:        "000000&action=show",
-									DisplayText: "顯示清單",
+									Label: "顯示清單",
+									Data:  "000000&action=show",
 								},
 							},
 						},

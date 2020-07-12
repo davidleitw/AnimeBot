@@ -29,16 +29,22 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		}
 	case "delete":
 		err := handleDeleteItem(userID, search)
-		if err != nil {
-			_, replyerr := bot.ReplyMessage(
-				event.ReplyToken,
-				linebot.NewTextMessage("刪除成功!"),
-			).Do()
-			// 發送新增成功訊息錯誤時會跳到下面這行
-			if replyerr != nil {
-				log.Println("Add data result show error = ", replyerr)
+		if err == nil {
+			var users []model.User
+			model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
+			if len(users) != 0 {
+				flex := handleShowlist(users)
+				_, err := bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewFlexMessage("flex", flex),
+				).Do()
+				if err != nil {
+					log.Println("Show list error = ", err)
+				}
 			}
+
 		}
+
 	case "show":
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)

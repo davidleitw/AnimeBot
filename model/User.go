@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	ID          string `gorm:"primary_key;"`
+	UserID      string `gorm:"primary_key;"`
 	SearchIndex string `gorm:"size:50;"`
 }
 

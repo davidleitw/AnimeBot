@@ -24,10 +24,12 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 				log.Println("!help message error = ", err)
 			}
 		} else if message.Text == "測試" {
-			log.Println("test area!")
+			animes := model.SearchAnimeInfoWithKey("刀劍")
+			flex := buildFlexContainerTypeCarousel(animes)
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
-				linebot.NewFlexMessage("Flex", replyFlexMessageTest("測試")),
+				linebot.NewFlexMessage("Flex1", flex),
+				linebot.NewFlexMessage("Flex2", flex),
 			).Do()
 			if err != nil {
 				log.Println("Testing error = ", err)
@@ -241,9 +243,9 @@ func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
 					Type:  linebot.FlexComponentTypeButton,
 					Style: linebot.FlexButtonStyleTypePrimary,
 					Color: "#f7af31",
-					Action: &linebot.MessageAction{
-						Label: "按鈕1",
-						Text:  "按鈕1測試",
+					Action: &linebot.PostbackAction{
+						Label: "添加至欲觀看清單",
+						Data:  anime.SearchIndex, // 添加指定的動漫所需要的編號
 					},
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},

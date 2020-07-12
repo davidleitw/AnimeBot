@@ -246,6 +246,7 @@ func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
 					Action: &linebot.PostbackAction{
 						Label: "添加至欲觀看清單",
 						Data:  anime.SearchIndex, // 添加指定的動漫所需要的編號
+						DisplayText: "已加入清單！", //聊天室顯示的訊息
 					},
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},

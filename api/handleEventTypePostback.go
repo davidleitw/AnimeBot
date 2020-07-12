@@ -10,18 +10,48 @@ import (
 )
 
 func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
-	user := event.Source.UserID
+	userID := event.Source.UserID
 	data := event.Postback.Data
 	search, action := handlePostbackData(data)
 	switch action {
 	case "add":
-		handleAddItem(user, search)
+		err := handleAddItem(userID, search)
+		// 如果新增資料沒有錯誤, 回覆新增成功訊息
+		if err == nil {
+			_, replyerr := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewTextMessage("新增成功!"),
+			).Do()
+			// 發送新增成功訊息錯誤時會跳到下面這行
+			if replyerr != nil {
+				log.Println("Add data result show error = ", replyerr)
+			}
+		}
 	case "delete":
-		handleDeleteItem(user, search)
+		handleDeleteItem(userID, search)
 	case "show":
-		handleShowList(user, bot)
+		var users []model.User
+		model.DB.Where("user_id = ?", users)
+		if len(users) == 0 {
+			_, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewTextMessage("目前您的清單還沒有資料"),
+			).Do()
+			if err != nil {
+				log.Println("show function empty error message!")
+			}
+			break
+		}
+		flex := handleShowlist(users)
+		_, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewFlexMessage("flex", flex),
+		).Do()
+		if err != nil {
+			log.Println("Show list error = ", err)
+		}
 	}
-	log.Println("user = ", user, ", search = ", search, ", action = ", action)
+	log.Println("user = ", userID, ", search = ", search, ", action = ", action)
 }
 
 // search&action=xxx
@@ -32,18 +62,36 @@ func handlePostbackData(data string) (search, action string) {
 	return
 }
 
-func handleAddItem(userID, search string) {
+// 用戶ID + search index 新增一個項目至清單, 不會重複
+func handleAddItem(userID, search string) error {
 	var user model.User
 	user.UserID = userID
 	user.SearchIndex = search
-	model.DB.Create(&user)
+	err := model.DB.Create(&user).Error
+	return err
 }
 
 func handleDeleteItem(userID, search string) {
 
 }
 
-func handleShowList(userID string, bot *linebot.Client) {
+func handleShowlist(users []model.User) *linebot.CarouselContainer {
+	container := &linebot.CarouselContainer{
+		Type:     linebot.FlexContainerTypeCarousel,
+		Contents: buildFlexContainBubbles(users),
+	}
+	return container
+}
+
+func buildFlexContainBubbles(users []model.User) []*linebot.BubbleContainer {
+	var containers []*linebot.BubbleContainer
+	for _, user := range users {
+		var anime model.ACG
+		search_index := user.SearchIndex
+		model.DB.Where("search_index = ?", search_index).First(&anime)
+		containers = append(containers, buildFlexContainCarouselwithItem(anime))
+	}
+	return containers
 
 }
 

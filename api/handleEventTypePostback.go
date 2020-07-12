@@ -56,15 +56,16 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 			if err != nil {
 				log.Println("show function empty error message!")
 			}
-			break
-		}
-		flex := handleShowlist(users)
-		_, err := bot.ReplyMessage(
-			event.ReplyToken,
-			linebot.NewFlexMessage("flex", flex),
-		).Do()
-		if err != nil {
-			log.Println("Show list error = ", err)
+
+		} else {
+			flex := handleShowlist(users)
+			_, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewFlexMessage("flex", flex),
+			).Do()
+			if err != nil {
+				log.Println("Show list error = ", err)
+			}
 		}
 	}
 	log.Println("user = ", userID, ", search = ", search, ", action = ", action)

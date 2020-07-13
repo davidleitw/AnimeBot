@@ -56,8 +56,9 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
 		handleUserlist(users, bot, event.ReplyToken)
-	case "new":
+	case "recommand":
 		// 新番推薦
+
 	}
 
 	log.Println("user = ", userID, ", search = ", search, ", action = ", action)

@@ -21,5 +21,6 @@ func main() {
 	// for _, val := range a {
 	// 	fmt.Println(val.JapName, "=> len: ", len(val.JapName))
 	// }
-	// model.CreateUserTable()
+	// model.CreateNewAnimeTable()
+	// model.CrewNewAnimeInfo()
 }

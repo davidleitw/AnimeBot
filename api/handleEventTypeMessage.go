@@ -35,7 +35,7 @@ ex: https://acg.gamer.com.tw/acgDetail.php?s=110596
 			if err != nil {
 				log.Println("!help message error = ", err)
 			}
-		} else if message.Text == "@清單" {
+		} else if message.Text == "@清單" || message.Text == "清單" || strings.EqualFold(message.Text, "list") {
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewFlexMessage("flex", &linebot.BubbleContainer{

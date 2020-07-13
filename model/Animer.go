@@ -84,6 +84,9 @@ func CrewSinglePage(url string) []string {
 }
 
 func CheckColonExist(str string) string {
+	if len(str) == 0 {
+		return "nil"
+	}
 	if val := strings.Split(str, "："); len(val) >= 2 {
 		return val[1]
 	}

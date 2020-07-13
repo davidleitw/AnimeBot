@@ -24,6 +24,7 @@ func AnimeBotServer() *gin.Engine {
 		log.Println("line bot linking successfully!")
 	}
 	server.POST("/callback", callbackHandler)
+	server.GET("/ping", callping)
 	return server
 }
 
@@ -56,4 +57,10 @@ func callbackHandler(ctx *gin.Context) {
 		}
 	}
 
+}
+
+func callping(ctx *gin.Context) {
+	ctx.JSON(200, gin.H{
+		"message": "ping",
+	})
 }

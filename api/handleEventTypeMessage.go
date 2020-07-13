@@ -91,7 +91,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			// 以巴哈姆特網址查詢
 			log.Println("https area!")
 			anime, err := model.SearchAnimeInfoWithindex(message.Text)
-			if err != nil {
+			if err != nil || anime.IsEmpty() {
 				// 沒有搜尋到
 				_, err := bot.ReplyMessage(
 					event.ReplyToken,

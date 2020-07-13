@@ -17,7 +17,6 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 	case "add":
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
-
 		if len(users) >= 50 {
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
@@ -53,10 +52,14 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		}
 
 	case "show":
+		// 顯示當前使用者收藏名單
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
 		handleUserlist(users, bot, event.ReplyToken)
+	case "new":
+		// 新番推薦
 	}
+
 	log.Println("user = ", userID, ", search = ", search, ", action = ", action)
 }
 

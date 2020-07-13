@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"reflect"
 	"strings"
 	"time"
 
@@ -29,6 +30,10 @@ type ACG struct {
 	Firm        string `gorm:"size:60;"`                        // 製作廠商
 	Agent       string `gorm:"size:60;"`                        // 台灣代理
 	Website     string `gorm:"size:150;"`                       // 官方網站
+}
+
+func (anime ACG) IsEmpty() bool {
+	return reflect.DeepEqual(anime, ACG{})
 }
 
 func PostgresExec(command string) {

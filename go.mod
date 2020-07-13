@@ -8,4 +8,5 @@ require (
 	github.com/jinzhu/gorm v1.9.14
 	github.com/joho/godotenv v1.3.0
 	github.com/line/line-bot-sdk-go v7.4.0+incompatible
+	github.com/robfig/cron v1.2.0
 )

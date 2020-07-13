@@ -29,17 +29,6 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			if err != nil {
 				log.Println("!help message error = ", err)
 			}
-		} else if message.Text == "測試" {
-			animes := model.SearchAnimeInfoWithKey("刀劍")
-			flex := buildFlexContainerTypeCarousel(animes)
-			_, err := bot.ReplyMessage(
-				event.ReplyToken,
-				linebot.NewFlexMessage("Flex1", flex),
-				linebot.NewFlexMessage("Flex2", flex),
-			).Do()
-			if err != nil {
-				log.Println("Testing error = ", err)
-			}
 		} else if message.Text == "@清單" {
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,

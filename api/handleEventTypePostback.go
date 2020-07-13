@@ -15,59 +15,47 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 	search, action := handlePostbackData(data)
 	switch action {
 	case "add":
-		err := handleAddItem(userID, search)
-		// 如果新增資料沒有錯誤, 回覆新增成功訊息
-		if err == nil {
-			_, replyerr := bot.ReplyMessage(
+		var users []model.User
+		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
+
+		if len(users) >= 50 {
+			_, err := bot.ReplyMessage(
 				event.ReplyToken,
-				linebot.NewTextMessage("新增成功!"),
+				linebot.NewTextMessage("不好意思，anime bot最多只能在收藏清單放入50部作品喔。\n如果您要再新增資料的話請先把已經觀賞完的作品從清單移除， 謝謝您的配合！"),
 			).Do()
-			// 發送新增成功訊息錯誤時會跳到下面這行
-			if replyerr != nil {
-				log.Println("Add data result show error = ", replyerr)
+			if err != nil {
+				log.Println("over added area error = ", err)
+			}
+		} else {
+			err := handleAddItem(userID, search)
+			// 如果新增資料沒有錯誤, 回覆新增成功訊息
+			if err == nil {
+				_, replyerr := bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewTextMessage("新增成功!"),
+				).Do()
+				// 發送新增成功訊息錯誤時會跳到下面這行
+				if replyerr != nil {
+					log.Println("Add data result show error = ", replyerr)
+				}
 			}
 		}
+
 	case "delete":
 		err := handleDeleteItem(userID, search)
 		if err == nil {
 			var users []model.User
 			model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
+			// 刪除完把清單資料再次show出來
 			if len(users) != 0 {
-				flex := handleShowlist(users)
-				_, err := bot.ReplyMessage(
-					event.ReplyToken,
-					linebot.NewFlexMessage("flex", flex),
-				).Do()
-				if err != nil {
-					log.Println("Show list error = ", err)
-				}
+				handleUserlist(users, bot, event.ReplyToken)
 			}
-
 		}
 
 	case "show":
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
-
-		if len(users) == 0 {
-			_, err := bot.ReplyMessage(
-				event.ReplyToken,
-				linebot.NewTextMessage("目前您的清單還沒有資料"),
-			).Do()
-			if err != nil {
-				log.Println("show function empty error message!")
-			}
-
-		} else {
-			flex := handleShowlist(users)
-			_, err := bot.ReplyMessage(
-				event.ReplyToken,
-				linebot.NewFlexMessage("flex", flex),
-			).Do()
-			if err != nil {
-				log.Println("Show list error = ", err)
-			}
-		}
+		handleUserlist(users, bot, event.ReplyToken)
 	}
 	log.Println("user = ", userID, ", search = ", search, ", action = ", action)
 }
@@ -89,6 +77,7 @@ func handleAddItem(userID, search string) error {
 	return err
 }
 
+// 刪除指定項目
 func handleDeleteItem(userID, search string) error {
 	var user model.User
 	user.UserID = userID
@@ -97,6 +86,86 @@ func handleDeleteItem(userID, search string) error {
 	return err
 }
 
+func handleUserlist(users []model.User, bot *linebot.Client, token string) {
+	l := len(users)
+	switch {
+	case l == 0:
+		_, err := bot.ReplyMessage(
+			token,
+			linebot.NewTextMessage("目前您的清單還沒有資料"),
+		).Do()
+		if err != nil {
+			log.Println("show function empty error message!")
+		}
+	case l <= 10:
+		flex := handleShowlist(users)
+		_, err := bot.ReplyMessage(
+			token,
+			linebot.NewFlexMessage("收集清單 page 1", flex),
+		).Do()
+		if err != nil {
+			log.Println("Show list error = ", err)
+		}
+	case l > 10 && l <= 20:
+		flex1 := handleShowlist(users[:10])
+		flex2 := handleShowlist(users[10:l])
+		_, err := bot.ReplyMessage(
+			token,
+			linebot.NewFlexMessage("收集清單 page 1", flex1),
+			linebot.NewFlexMessage("收集清單 page 2", flex2),
+		).Do()
+		if err != nil {
+			log.Println("Show list error = ", err)
+		}
+	case l > 20 && l <= 30:
+		flex1 := handleShowlist(users[:10])
+		flex2 := handleShowlist(users[10:20])
+		flex3 := handleShowlist(users[20:l])
+		_, err := bot.ReplyMessage(
+			token,
+			linebot.NewFlexMessage("收集清單 page 1", flex1),
+			linebot.NewFlexMessage("收集清單 page 2", flex2),
+			linebot.NewFlexMessage("收集清單 page 3", flex3),
+		).Do()
+		if err != nil {
+			log.Println("Show list error = ", err)
+		}
+	case l > 30 && l <= 40:
+		flex1 := handleShowlist(users[:10])
+		flex2 := handleShowlist(users[10:20])
+		flex3 := handleShowlist(users[20:30])
+		flex4 := handleShowlist(users[30:l])
+		_, err := bot.ReplyMessage(
+			token,
+			linebot.NewFlexMessage("收集清單 page 1", flex1),
+			linebot.NewFlexMessage("收集清單 page 2", flex2),
+			linebot.NewFlexMessage("收集清單 page 3", flex3),
+			linebot.NewFlexMessage("收集清單 page 4", flex4),
+		).Do()
+		if err != nil {
+			log.Println("Show list error = ", err)
+		}
+	case l > 40 && l <= 50:
+		flex1 := handleShowlist(users[:10])
+		flex2 := handleShowlist(users[10:20])
+		flex3 := handleShowlist(users[20:30])
+		flex4 := handleShowlist(users[30:40])
+		flex5 := handleShowlist(users[40:l])
+		_, err := bot.ReplyMessage(
+			token,
+			linebot.NewFlexMessage("收集清單 page 1", flex1),
+			linebot.NewFlexMessage("收集清單 page 2", flex2),
+			linebot.NewFlexMessage("收集清單 page 3", flex3),
+			linebot.NewFlexMessage("收集清單 page 4", flex4),
+			linebot.NewFlexMessage("收集清單 page 5", flex5),
+		).Do()
+		if err != nil {
+			log.Println("Show list error = ", err)
+		}
+	}
+}
+
+// build特定使用者清單
 func handleShowlist(users []model.User) *linebot.CarouselContainer {
 	container := &linebot.CarouselContainer{
 		Type:     linebot.FlexContainerTypeCarousel,
@@ -105,6 +174,7 @@ func handleShowlist(users []model.User) *linebot.CarouselContainer {
 	return container
 }
 
+// flex message 集合
 func buildFlexContainBubbles(users []model.User) []*linebot.BubbleContainer {
 	var containers []*linebot.BubbleContainer
 	for _, user := range users {
@@ -115,9 +185,9 @@ func buildFlexContainBubbles(users []model.User) []*linebot.BubbleContainer {
 		containers = append(containers, buildFlexContainCarouselwithItem(anime))
 	}
 	return containers
-
 }
 
+// 單個flex message
 func buildFlexContainCarouselwithItem(anime model.ACG) *linebot.BubbleContainer {
 	container := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,

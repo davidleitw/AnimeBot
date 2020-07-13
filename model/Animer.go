@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"reflect"
 	"strings"
 	"time"
 
@@ -29,6 +30,10 @@ type ACG struct {
 	Firm        string `gorm:"size:60;"`                        // 製作廠商
 	Agent       string `gorm:"size:60;"`                        // 台灣代理
 	Website     string `gorm:"size:150;"`                       // 官方網站
+}
+
+func (anime ACG) IsEmpty() bool {
+	return reflect.DeepEqual(anime, ACG{})
 }
 
 func PostgresExec(command string) {
@@ -258,6 +263,42 @@ func SearchAnimeInfoWithindex(_url string) (ACG, error) {
 	}
 
 	return anime, nil
+}
+
+func VerifyAnime(anime *ACG) {
+	if len(anime.Agent) == 0 {
+		anime.Agent = "nil"
+	}
+	if len(anime.Author) == 0 {
+		anime.Author = "nil"
+	}
+	if len(anime.Class) == 0 {
+		anime.Class = "nil"
+	}
+	if len(anime.Director) == 0 {
+		anime.Director = "nil"
+	}
+	if len(anime.Firm) == 0 {
+		anime.Firm = "nil"
+	}
+	if len(anime.Image) == 0 {
+		anime.Image = "nil"
+	}
+	if len(anime.JapName) == 0 {
+		anime.JapName = "nil"
+	}
+	if len(anime.Premiere) == 0 {
+		anime.Premiere = "nil"
+	}
+	if len(anime.SearchIndex) == 0 {
+		anime.SearchIndex = "nil"
+	}
+	if len(anime.TaiName) == 0 {
+		anime.TaiName = "nil"
+	}
+	if len(anime.Website) == 0 {
+		anime.Website = "nil"
+	}
 }
 
 // 如果該作品有欄位為空, 填入nil以便於flex可以正常運作

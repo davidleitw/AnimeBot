@@ -14,12 +14,17 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
 		log.Println("Input text: ", message.Text)
-		if message.Text == "!help" || message.Text == "-h" || message.Text == "-help" {
+		if message.Text == "!help" || message.Text == "-h" || message.Text == "-help" || strings.EqualFold(message.Text, "help") {
 			// 功能講解
 			log.Println("help area!")
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
-				linebot.NewTextMessage("Help message: Help!"),
+				linebot.NewTextMessage(`歡迎使用Anime Bot服務!\n
+										此服務可以提供動漫作品查詢, 並將其列入喜好清單內\n
+										如果想要查詢作品請輸入@作品名稱, 即可跳出搜尋結果\n
+										如果以關鍵字搜尋不到可能是因為作品翻譯問題, 可以輸入巴哈姆特動畫資料庫該作品的網址做查詢\n
+										ex: https://acg.gamer.com.tw/acgDetail.php?s=110596\n
+										如果想查看現在喜好清單內的作品可以點擊下方清單按鈕或者輸入@清單\n`),
 			).Do()
 			if err != nil {
 				log.Println("!help message error = ", err)
@@ -31,6 +36,31 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 				event.ReplyToken,
 				linebot.NewFlexMessage("Flex1", flex),
 				linebot.NewFlexMessage("Flex2", flex),
+			).Do()
+			if err != nil {
+				log.Println("Testing error = ", err)
+			}
+		} else if message.Text == "@清單" {
+			_, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewFlexMessage("flex", &linebot.BubbleContainer{
+					Type: linebot.FlexContainerTypeBubble,
+					Footer: &linebot.BoxComponent{
+						Type:   linebot.FlexComponentTypeBox,
+						Layout: linebot.FlexBoxLayoutTypeVertical,
+						Contents: []linebot.FlexComponent{
+							&linebot.ButtonComponent{
+								Type:  linebot.FlexComponentTypeButton,
+								Style: linebot.FlexButtonStyleTypePrimary,
+								Color: "#f7af31",
+								Action: &linebot.PostbackAction{
+									Label: "顯示清單",
+									Data:  "000000&action=show",
+								},
+							},
+						},
+					},
+				}),
 			).Do()
 			if err != nil {
 				log.Println("Testing error = ", err)
@@ -61,7 +91,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			// 以巴哈姆特網址查詢
 			log.Println("https area!")
 			anime, err := model.SearchAnimeInfoWithindex(message.Text)
-			if err != nil {
+			if err != nil || anime.IsEmpty() {
 				// 沒有搜尋到
 				_, err := bot.ReplyMessage(
 					event.ReplyToken,
@@ -256,156 +286,8 @@ func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
 					Style: linebot.FlexButtonStyleTypePrimary,
 					Color: "#f7af31",
 					Action: &linebot.URIAction{
-						Label: "詳細資料",
+						Label: "作品詳細資料",
 						URI:   fmt.Sprintf("https://acg.gamer.com.tw/acgDetail.php?s=%s", anime.SearchIndex),
-					},
-					Margin: linebot.FlexComponentMarginTypeXxl,
-				},
-			},
-		},
-	}
-	return container
-}
-
-func replyFlexMessageTest(animeName string) *linebot.BubbleContainer {
-	container := &linebot.BubbleContainer{
-		Type: linebot.FlexContainerTypeBubble,
-		Hero: &linebot.ImageComponent{
-			URL: "https://p2.bahamut.com.tw/B/ACG/c/96/0000110596.JPG",
-			//Size: linebot.FlexImageSizeTypeFull,
-			Size: linebot.FlexImageSizeType5xl,
-		},
-		Body: &linebot.BoxComponent{
-			Type:   linebot.FlexComponentTypeBox,
-			Layout: linebot.FlexBoxLayoutTypeVertical,
-			Contents: []linebot.FlexComponent{
-				&linebot.SeparatorComponent{
-					Margin: linebot.FlexComponentMarginTypeXxl,
-				},
-				&linebot.BoxComponent{
-					Type:   linebot.FlexComponentTypeBox,
-					Layout: linebot.FlexBoxLayoutTypeVertical,
-					Contents: []linebot.FlexComponent{
-						&linebot.TextComponent{
-							Type:   linebot.FlexComponentTypeText,
-							Text:   "刀劍神域 Alicization War of Underworld -THE LAST SEASON-",
-							Wrap:   true,
-							Weight: linebot.FlexTextWeightTypeBold,
-							Size:   linebot.FlexTextSizeTypeXl,
-							Margin: linebot.FlexComponentMarginTypeMd,
-							Color:  "#f7af31",
-						},
-						&linebot.TextComponent{
-							Type: linebot.FlexComponentTypeText,
-							Text: "ソードアート・オンライン アリシゼーション War of Underworld -THE LAST SEASON-",
-							Size: linebot.FlexTextSizeTypeXs,
-							Wrap: true,
-						},
-						&linebot.SeparatorComponent{},
-						&linebot.SpacerComponent{},
-					},
-				},
-				&linebot.BoxComponent{
-					Type:   linebot.FlexComponentTypeBox,
-					Layout: linebot.FlexBoxLayoutTypeVertical,
-					Contents: []linebot.FlexComponent{
-						&linebot.BoxComponent{
-							Type:   linebot.FlexComponentTypeBox,
-							Layout: linebot.FlexBoxLayoutTypeVertical,
-							Contents: []linebot.FlexComponent{
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "首播時間",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#f7af31",
-								},
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "2020-04-25",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#111111",
-									Align: linebot.FlexComponentAlignTypeEnd,
-								},
-							},
-						},
-						&linebot.BoxComponent{
-							Type:   linebot.FlexComponentTypeBox,
-							Layout: linebot.FlexBoxLayoutTypeVertical,
-							Contents: []linebot.FlexComponent{
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "原著作者",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#f7af31",
-								},
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "川原礫",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#111111",
-									Align: linebot.FlexComponentAlignTypeEnd,
-								},
-							},
-						},
-						&linebot.BoxComponent{
-							Type:   linebot.FlexComponentTypeBox,
-							Layout: linebot.FlexBoxLayoutTypeVertical,
-							Contents: []linebot.FlexComponent{
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "作畫公司",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#f7af31",
-								},
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "A-1 Pictures",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#111111",
-									Align: linebot.FlexComponentAlignTypeEnd,
-								},
-							},
-						},
-						&linebot.BoxComponent{
-							Type:   linebot.FlexComponentTypeBox,
-							Layout: linebot.FlexBoxLayoutTypeVertical,
-							Contents: []linebot.FlexComponent{
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "官方網站",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#f7af31",
-								},
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "https://sao-alicization.net/",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#111111",
-									Align: linebot.FlexComponentAlignTypeEnd,
-								},
-							},
-						},
-						&linebot.SpacerComponent{},
-					},
-					Margin: linebot.FlexComponentMarginTypeXl,
-				},
-				&linebot.ButtonComponent{
-					Type:  linebot.FlexComponentTypeButton,
-					Style: linebot.FlexButtonStyleTypePrimary,
-					Color: "#f7af31",
-					Action: &linebot.MessageAction{
-						Label: "按鈕1",
-						Text:  "按鈕1測試",
-					},
-					Margin: linebot.FlexComponentMarginTypeXxl,
-				},
-				&linebot.ButtonComponent{
-					Type:  linebot.FlexComponentTypeButton,
-					Style: linebot.FlexButtonStyleTypePrimary,
-					Color: "#f7af31",
-					Action: &linebot.MessageAction{
-						Label: "按鈕2",
-						Text:  "按鈕2測試",
 					},
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},

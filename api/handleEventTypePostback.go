@@ -339,30 +339,33 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 								},
 							},
 						},
-						&linebot.SpacerComponent{},
 					},
 					Margin: linebot.FlexComponentMarginTypeXl,
 				},
+			},
+		},
+		Footer: &linebot.BoxComponent{
+			Type:   linebot.FlexComponentTypeBox,
+			Layout: linebot.FlexBoxLayoutTypeVertical,
+			Contents: []linebot.FlexComponent{
 				&linebot.ButtonComponent{
 					Type:  linebot.FlexComponentTypeButton,
-					Style: linebot.FlexButtonStyleTypePrimary,
+					Style: linebot.FlexButtonStyleTypeLink,
 					Color: "#f7af31",
 					Action: &linebot.PostbackAction{
-						Label:       "添加至欲觀看清單",
-						Data:        anime.SearchIndex + "&action=add", // 添加指定的動漫所需要的編號
-						DisplayText: "加入清單",
+						Label: "加入收藏清單",
+						Data:  anime.SearchIndex + "&action=add",
 					},
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},
 				&linebot.ButtonComponent{
 					Type:  linebot.FlexComponentTypeButton,
-					Style: linebot.FlexButtonStyleTypePrimary,
+					Style: linebot.FlexButtonStyleTypeLink,
 					Color: "#f7af31",
 					Action: &linebot.URIAction{
 						Label: "作品詳細資料",
 						URI:   fmt.Sprintf("https://acg.gamer.com.tw/acgDetail.php?s=%s", anime.SearchIndex),
 					},
-					Margin: linebot.FlexComponentMarginTypeXxl,
 				},
 			},
 		},

@@ -309,39 +309,16 @@ func SearchAnimeInfoWithKey(key string) []ACG {
 	var animes []ACG
 	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(10).Find(&animes)
 	for idx := 0; idx < len(animes); idx++ {
-		if len(animes[idx].Agent) == 0 {
-			animes[idx].Agent = "nil"
-		}
-		if len(animes[idx].Author) == 0 {
-			animes[idx].Author = "nil"
-		}
-		if len(animes[idx].Class) == 0 {
-			animes[idx].Class = "nil"
-		}
-		if len(animes[idx].Director) == 0 {
-			animes[idx].Director = "nil"
-		}
-		if len(animes[idx].Firm) == 0 {
-			animes[idx].Firm = "nil"
-		}
-		if len(animes[idx].Image) == 0 {
-			animes[idx].Image = "nil"
-		}
-		if len(animes[idx].JapName) == 0 {
-			animes[idx].JapName = "nil"
-		}
-		if len(animes[idx].Premiere) == 0 {
-			animes[idx].Premiere = "nil"
-		}
-		if len(animes[idx].SearchIndex) == 0 {
-			animes[idx].SearchIndex = "nil"
-		}
-		if len(animes[idx].TaiName) == 0 {
-			animes[idx].TaiName = "nil"
-		}
-		if len(animes[idx].Website) == 0 {
-			animes[idx].Website = "nil"
-		}
+		VerifyAnime(&animes[idx])
+	}
+	return animes
+}
+
+func SearchAnimeInfoWithAuthor(author string) []ACG {
+	var animes []ACG
+	DB.Where("author LIKE ?", "%"+author+"%").Limit(10).Find(&animes)
+	for idx := 0; idx < len(animes); idx++ {
+		VerifyAnime(&animes[idx])
 	}
 	return animes
 }

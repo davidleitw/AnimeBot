@@ -26,6 +26,7 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 			log.Println("!help message error = ", err)
 		}
 	case "add":
+		// 新增作品至收藏清單
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
 		if len(users) >= 50 {
@@ -50,8 +51,8 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 				}
 			}
 		}
-
 	case "delete":
+		// 刪除特定項目
 		err := handleDeleteItem(userID, search)
 		if err == nil {
 			var users []model.User
@@ -61,7 +62,6 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 				handleUserlist(users, bot, event.ReplyToken)
 			}
 		}
-
 	case "show":
 		// 顯示當前使用者收藏名單
 		var users []model.User
@@ -82,7 +82,7 @@ func handleRecommand(bot *linebot.Client, token string) {
 	model.DB.Find(&animes)
 	sort.Sort(animes)
 	animesSubset := animes[:10]
-	flex := buildNewAnimeslist(animesSubset)
+	flex := buildNewAnimesList(animesSubset)
 	_, err := bot.ReplyMessage(
 		token,
 		linebot.NewFlexMessage("新番推薦", flex),
@@ -130,7 +130,7 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("show function empty error message!")
 		}
 	case l <= 10:
-		flex := buildShowlist(users)
+		flex := buildUserFavoriteList(users)
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex),
@@ -139,8 +139,8 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("Show list error = ", err)
 		}
 	case l > 10 && l <= 20:
-		flex1 := buildShowlist(users[:10])
-		flex2 := buildShowlist(users[10:l])
+		flex1 := buildUserFavoriteList(users[:10])
+		flex2 := buildUserFavoriteList(users[10:l])
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex1),
@@ -150,9 +150,9 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("Show list error = ", err)
 		}
 	case l > 20 && l <= 30:
-		flex1 := buildShowlist(users[:10])
-		flex2 := buildShowlist(users[10:20])
-		flex3 := buildShowlist(users[20:l])
+		flex1 := buildUserFavoriteList(users[:10])
+		flex2 := buildUserFavoriteList(users[10:20])
+		flex3 := buildUserFavoriteList(users[20:l])
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex1),
@@ -163,10 +163,10 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("Show list error = ", err)
 		}
 	case l > 30 && l <= 40:
-		flex1 := buildShowlist(users[:10])
-		flex2 := buildShowlist(users[10:20])
-		flex3 := buildShowlist(users[20:30])
-		flex4 := buildShowlist(users[30:l])
+		flex1 := buildUserFavoriteList(users[:10])
+		flex2 := buildUserFavoriteList(users[10:20])
+		flex3 := buildUserFavoriteList(users[20:30])
+		flex4 := buildUserFavoriteList(users[30:l])
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex1),
@@ -178,11 +178,11 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("Show list error = ", err)
 		}
 	case l > 40 && l <= 50:
-		flex1 := buildShowlist(users[:10])
-		flex2 := buildShowlist(users[10:20])
-		flex3 := buildShowlist(users[20:30])
-		flex4 := buildShowlist(users[30:40])
-		flex5 := buildShowlist(users[40:l])
+		flex1 := buildUserFavoriteList(users[:10])
+		flex2 := buildUserFavoriteList(users[10:20])
+		flex3 := buildUserFavoriteList(users[20:30])
+		flex4 := buildUserFavoriteList(users[30:40])
+		flex5 := buildUserFavoriteList(users[40:l])
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex1),
@@ -198,26 +198,26 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 }
 
 // Newanimes
-func buildNewAnimeslist(animes model.NewAnimes) *linebot.CarouselContainer {
+func buildNewAnimesList(animes model.NewAnimes) *linebot.CarouselContainer {
 	container := &linebot.CarouselContainer{
 		Type:     linebot.FlexContainerTypeCarousel,
-		Contents: buildFlexContainBubblesNewAnimes(animes),
+		Contents: buildBubblesWithNewAnime(animes),
 	}
 	return container
 }
 
 // Newanimes
-func buildFlexContainBubblesNewAnimes(animes model.NewAnimes) []*linebot.BubbleContainer {
+func buildBubblesWithNewAnime(animes model.NewAnimes) []*linebot.BubbleContainer {
 	var containers []*linebot.BubbleContainer
 	for _, anime := range animes {
 		log.Println("ok")
-		containers = append(containers, buildFlexContainBubblesWithNewAnimes(anime))
+		containers = append(containers, buildBubbleWithNewAnime(anime))
 	}
 	return containers
 }
 
 // Newanimes
-func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleContainer {
+func buildBubbleWithNewAnime(anime model.NewAnime) *linebot.BubbleContainer {
 	contain := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
@@ -274,29 +274,29 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 }
 
 // build特定使用者清單
-func buildShowlist(users []model.User) *linebot.CarouselContainer {
+func buildUserFavoriteList(users []model.User) *linebot.CarouselContainer {
 	container := &linebot.CarouselContainer{
 		Type:     linebot.FlexContainerTypeCarousel,
-		Contents: buildFlexContainBubbles(users),
+		Contents: buildBubblesWithNewAnimeforlist(users),
 	}
 	return container
 }
 
 // flex message 集合
-func buildFlexContainBubbles(users []model.User) []*linebot.BubbleContainer {
+func buildBubblesWithNewAnimeforlist(users []model.User) []*linebot.BubbleContainer {
 	var containers []*linebot.BubbleContainer
 	for _, user := range users {
 		var anime model.ACG
 		search_index := user.SearchIndex
 		model.DB.Where("search_index = ?", search_index).First(&anime)
 		model.VerifyAnime(&anime)
-		containers = append(containers, buildFlexContainCarouselwithItem(anime))
+		containers = append(containers, buildBubbleWithAnimeForList(anime))
 	}
 	return containers
 }
 
 // 單個flex message
-func buildFlexContainCarouselwithItem(anime model.ACG) *linebot.BubbleContainer {
+func buildBubbleWithAnimeForList(anime model.ACG) *linebot.BubbleContainer {
 	container := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
@@ -361,6 +361,5 @@ func buildFlexContainCarouselwithItem(anime model.ACG) *linebot.BubbleContainer 
 			},
 		},
 	}
-
 	return container
 }

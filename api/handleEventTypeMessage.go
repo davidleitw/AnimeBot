@@ -15,10 +15,9 @@ const helpMessage = "歡迎使用Anime Bot服務!\n\n" + "此服務可以提供�
 func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
-		log.Println("Input text: ", message.Text)
-		if message.Text == "!help" || message.Text == "-h" || message.Text == "-help" || strings.EqualFold(message.Text, "help") {
-			// 功能講解
-			log.Println("help area!")
+		switch Message := message.Text; {
+		// 使用說明
+		case strings.EqualFold(Message, "help") || Message == "!help" || Message == "-h" || Message == "-help":
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewTextMessage(helpMessage),
@@ -26,7 +25,9 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			if err != nil {
 				log.Println("!help message error = ", err)
 			}
-		} else if message.Text == "@清單" || message.Text == "清單" || strings.EqualFold(message.Text, "list") {
+
+		// 收藏清單
+		case strings.EqualFold(Message, "list") || Message == "@清單" || Message == "清單":
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewFlexMessage("flex", &linebot.BubbleContainer{
@@ -51,10 +52,12 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			if err != nil {
 				log.Println("Testing error = ", err)
 			}
-		} else if (message.Text[0] == '@' || message.Text[0] == '!') && len(message.Text) >= 2 {
-			// 搜尋單一動漫
-			animes := model.SearchAnimeInfoWithKey(message.Text[1:])
+
+		// 以作品名稱查詢
+		case Message[0] == '@' && len([]rune(Message)) >= 2:
+			animes := model.SearchAnimeInfoWithKey(Message[1:])
 			if len(animes) > 0 {
+				// 至少有查詢到一個結果
 				flex := buildFlexContainerTypeCarousel(animes)
 				_, err := bot.ReplyMessage(
 					event.ReplyToken,
@@ -64,6 +67,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 					log.Println("Send search response error = ", err)
 				}
 			} else {
+				// 沒有搜尋到結果
 				_, err := bot.ReplyMessage(
 					event.ReplyToken,
 					linebot.NewTextMessage("對不起, 您輸入的關鍵字無法查詢到結果, 請確認輸入的文字是否正確"),
@@ -73,9 +77,32 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 				}
 			}
 
-		} else if strings.Contains(message.Text, "https") {
-			// 以巴哈姆特網址查詢
-			log.Println("https area!")
+		// 以作者名稱查詢
+		case Message[0] == '!' && len([]rune(Message)) >= 2:
+			animes := model.SearchAnimeInfoWithAuthor(Message[1:])
+			if len(animes) > 0 {
+				// 至少有查詢到一個結果
+				flex := buildFlexContainerTypeCarousel(animes)
+				_, err := bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewFlexMessage("flex", flex),
+				).Do()
+				if err != nil {
+					log.Println("Send search response error = ", err)
+				}
+			} else {
+				// 沒有搜尋到結果
+				_, err := bot.ReplyMessage(
+					event.ReplyToken,
+					linebot.NewTextMessage("對不起, 您輸入的關鍵字無法查詢到結果, 請確認輸入的文字是否正確"),
+				).Do()
+				if err != nil {
+					log.Println("search zero statment error!")
+				}
+			}
+
+		// 以巴哈姆特網址查詢
+		case strings.Contains(Message, "https"):
 			anime, err := model.SearchAnimeInfoWithindex(message.Text)
 			if err != nil || anime.IsEmpty() {
 				// 沒有搜尋到
@@ -97,18 +124,12 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 				}
 			}
 
-		} else {
-			log.Println("else area!")
-			_, err := bot.ReplyMessage(
-				event.ReplyToken,
-				linebot.NewTextMessage("Anime Bot: "+message.Text),
-			).Do()
-			if err != nil {
-				log.Println("Normal text message error = ", err)
-			}
+		// 非指令區
+		default:
 		}
 	}
 }
+
 func buildFlexContainerTypeCarouselSingle(anime model.ACG) *linebot.CarouselContainer {
 	container := &linebot.CarouselContainer{
 		Type: linebot.FlexContainerTypeCarousel,

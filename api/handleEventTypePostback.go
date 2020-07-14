@@ -224,58 +224,143 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 	contain := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
-			Type:       linebot.FlexComponentTypeImage,
-			URL:        anime.ImageSrc,
-			Size:       linebot.FlexImageSizeTypeFull,
-			AspectMode: linebot.FlexImageAspectModeTypeCover, // 有可能的錯誤1
+			URL:  anime.ImageSrc,
+			Size: linebot.FlexImageSizeType5xl,
 		},
 		Body: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,
 			Layout: linebot.FlexBoxLayoutTypeVertical,
 			Contents: []linebot.FlexComponent{
+				&linebot.SeparatorComponent{
+					Margin: linebot.FlexComponentMarginTypeXxl,
+				},
 				&linebot.BoxComponent{
 					Type:   linebot.FlexComponentTypeBox,
-					Layout: linebot.FlexBoxLayoutTypeBaseline,
+					Layout: linebot.FlexBoxLayoutTypeVertical,
 					Contents: []linebot.FlexComponent{
-						&linebot.IconComponent{
-							Type: linebot.FlexComponentTypeIcon,
-							URL:  "https://img.icons8.com/officel/2x/fire-element.png",
-						},
 						&linebot.TextComponent{
 							Type:   linebot.FlexComponentTypeText,
 							Text:   anime.TaiName,
-							Margin: linebot.FlexComponentMarginTypeMd,
-							Size:   linebot.FlexTextSizeTypeMd,
-							Weight: linebot.FlexTextWeightTypeBold,
-							Color:  "#f7af31",
 							Wrap:   true,
+							Weight: linebot.FlexTextWeightTypeBold,
+							Size:   linebot.FlexTextSizeTypeXl,
+							Margin: linebot.FlexComponentMarginTypeMd,
+							Color:  "#f7af31",
 						},
+						&linebot.TextComponent{
+							Type: linebot.FlexComponentTypeText,
+							Text: anime.JapName,
+							Size: linebot.FlexTextSizeTypeXs,
+							Wrap: true,
+						},
+						&linebot.SeparatorComponent{},
+						&linebot.SpacerComponent{},
 					},
 				},
-			},
-		},
-		Footer: &linebot.BoxComponent{
-			Type:   linebot.FlexComponentTypeBox,
-			Layout: linebot.FlexBoxLayoutTypeVertical,
-			Contents: []linebot.FlexComponent{
+				&linebot.BoxComponent{
+					Type:   linebot.FlexComponentTypeBox,
+					Layout: linebot.FlexBoxLayoutTypeVertical,
+					Contents: []linebot.FlexComponent{
+						&linebot.BoxComponent{
+							Type:   linebot.FlexComponentTypeBox,
+							Layout: linebot.FlexBoxLayoutTypeVertical,
+							Contents: []linebot.FlexComponent{
+								&linebot.TextComponent{
+									Type:  linebot.FlexComponentTypeText,
+									Text:  "首播時間",
+									Size:  linebot.FlexTextSizeTypeSm,
+									Color: "#f7af31",
+								},
+								&linebot.TextComponent{
+									Type:  linebot.FlexComponentTypeText,
+									Text:  anime.Premiere,
+									Size:  linebot.FlexTextSizeTypeSm,
+									Color: "#111111",
+									Align: linebot.FlexComponentAlignTypeEnd,
+								},
+							},
+						},
+						&linebot.BoxComponent{
+							Type:   linebot.FlexComponentTypeBox,
+							Layout: linebot.FlexBoxLayoutTypeVertical,
+							Contents: []linebot.FlexComponent{
+								&linebot.TextComponent{
+									Type:  linebot.FlexComponentTypeText,
+									Text:  "原著作者",
+									Size:  linebot.FlexTextSizeTypeSm,
+									Color: "#f7af31",
+								},
+								&linebot.TextComponent{
+									Type:  linebot.FlexComponentTypeText,
+									Text:  anime.Author,
+									Size:  linebot.FlexTextSizeTypeSm,
+									Color: "#111111",
+									Align: linebot.FlexComponentAlignTypeEnd,
+								},
+							},
+						},
+						&linebot.BoxComponent{
+							Type:   linebot.FlexComponentTypeBox,
+							Layout: linebot.FlexBoxLayoutTypeVertical,
+							Contents: []linebot.FlexComponent{
+								&linebot.TextComponent{
+									Type:  linebot.FlexComponentTypeText,
+									Text:  "作畫公司",
+									Size:  linebot.FlexTextSizeTypeSm,
+									Color: "#f7af31",
+								},
+								&linebot.TextComponent{
+									Type:  linebot.FlexComponentTypeText,
+									Text:  anime.Firm,
+									Size:  linebot.FlexTextSizeTypeSm,
+									Color: "#111111",
+									Align: linebot.FlexComponentAlignTypeEnd,
+								},
+							},
+						},
+						&linebot.BoxComponent{
+							Type:   linebot.FlexComponentTypeBox,
+							Layout: linebot.FlexBoxLayoutTypeVertical,
+							Contents: []linebot.FlexComponent{
+								&linebot.TextComponent{
+									Type:  linebot.FlexComponentTypeText,
+									Text:  "官方網站",
+									Size:  linebot.FlexTextSizeTypeSm,
+									Color: "#f7af31",
+								},
+								&linebot.TextComponent{
+									Type:  linebot.FlexComponentTypeText,
+									Text:  anime.Website,
+									Size:  linebot.FlexTextSizeTypeSm,
+									Color: "#111111",
+									Align: linebot.FlexComponentAlignTypeEnd,
+								},
+							},
+						},
+						&linebot.SpacerComponent{},
+					},
+					Margin: linebot.FlexComponentMarginTypeXl,
+				},
 				&linebot.ButtonComponent{
 					Type:  linebot.FlexComponentTypeButton,
-					Style: linebot.FlexButtonStyleTypeLink,
+					Style: linebot.FlexButtonStyleTypePrimary,
 					Color: "#f7af31",
 					Action: &linebot.PostbackAction{
-						Label: "加入收藏清單",
-						Data:  anime.SearchIndex + "&action=add",
+						Label:       "添加至欲觀看清單",
+						Data:        anime.SearchIndex + "&action=add", // 添加指定的動漫所需要的編號
+						DisplayText: "加入清單",
 					},
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},
 				&linebot.ButtonComponent{
 					Type:  linebot.FlexComponentTypeButton,
-					Style: linebot.FlexButtonStyleTypeLink,
+					Style: linebot.FlexButtonStyleTypePrimary,
 					Color: "#f7af31",
 					Action: &linebot.URIAction{
 						Label: "作品詳細資料",
 						URI:   fmt.Sprintf("https://acg.gamer.com.tw/acgDetail.php?s=%s", anime.SearchIndex),
 					},
+					Margin: linebot.FlexComponentMarginTypeXxl,
 				},
 			},
 		},

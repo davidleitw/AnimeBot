@@ -76,11 +76,12 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		sort.Sort(animes)
 		animesSubset := animes[:10]
 		flex := buildNewAnimeslist(animesSubset)
+		log.Println("flex = ", flex)
 		//flex := buildFlexContainBubblesWithNewAnimes(animesSubset[0])
 		_, err := bot.ReplyMessage(
 			event.ReplyToken,
 			linebot.NewTextMessage("測試reply是否正常"),
-			linebot.NewFlexMessage("新番推薦", flex),
+			//linebot.NewFlexMessage("新番推薦", flex),
 		).Do()
 		if err != nil {
 			log.Println("New anime error = ", err)

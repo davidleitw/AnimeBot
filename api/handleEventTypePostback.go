@@ -212,8 +212,8 @@ func buildNewAnimeslist(animes model.NewAnimes) *linebot.CarouselContainer {
 func buildFlexContainBubblesNewAnimes(animes model.NewAnimes) []*linebot.BubbleContainer {
 	var containers []*linebot.BubbleContainer
 	for _, anime := range animes {
-		containers = append(containers, buildFlexContainBubblesWithNewAnimes(anime))
 		log.Println("ok")
+		containers = append(containers, buildFlexContainBubblesWithNewAnimes(anime))
 	}
 	return containers
 }

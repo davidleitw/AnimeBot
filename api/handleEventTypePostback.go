@@ -71,6 +71,19 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 	case "recommand":
 		// 新番推薦
 		handleRecommand(bot, event.ReplyToken)
+		var animes model.NewAnimes
+		model.DB.Find(&animes)
+		sort.Sort(animes)
+		animesSubset := animes[:10]
+		flex := buildNewAnimeslist(animesSubset)
+		//flex := buildFlexContainBubblesWithNewAnimes(animesSubset[0])
+		_, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewFlexMessage("新番推薦", flex),
+		).Do()
+		if err != nil {
+			log.Println("New anime error = ", err)
+		}
 	}
 
 	log.Println("user = ", userID, ", search = ", search, ", action = ", action)
@@ -78,21 +91,7 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 
 // Newanimes
 func handleRecommand(bot *linebot.Client, token string) {
-	var animes model.NewAnimes
-	model.DB.Find(&animes)
-	sort.Sort(animes)
-	animesSubset := animes[:10]
-	log.Println(animesSubset)
-	log.Println("len = ", len(animesSubset))
-	//flex := buildNewAnimeslist(animesSubset)
-	flex := buildFlexContainBubblesWithNewAnimes(animesSubset[0])
-	_, err := bot.ReplyMessage(
-		token,
-		linebot.NewFlexMessage("新番推薦", flex),
-	).Do()
-	if err != nil {
-		log.Println("New anime error = ", err)
-	}
+
 }
 
 // search&action=xxx
@@ -214,6 +213,7 @@ func buildFlexContainBubblesNewAnimes(animes model.NewAnimes) []*linebot.BubbleC
 	var containers []*linebot.BubbleContainer
 	for _, anime := range animes {
 		containers = append(containers, buildFlexContainBubblesWithNewAnimes(anime))
+		log.Println("ok")
 	}
 	return containers
 }
@@ -223,10 +223,10 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 	contain := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
-			//Type:       linebot.FlexComponentTypeImage,
-			URL:  anime.ImageSrc,
-			Size: linebot.FlexImageSizeTypeFull,
-			//AspectMode: linebot.FlexImageAspectModeTypeCover, // 有可能的錯誤1
+			Type:       linebot.FlexComponentTypeImage,
+			URL:        anime.ImageSrc,
+			Size:       linebot.FlexImageSizeTypeFull,
+			AspectMode: linebot.FlexImageAspectModeTypeCover, // 有可能的錯誤1
 		},
 		Body: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,

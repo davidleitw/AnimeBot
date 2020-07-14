@@ -75,6 +75,7 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 	log.Println("user = ", userID, ", search = ", search, ", action = ", action)
 }
 
+// Newanimes
 func handleRecommand(bot *linebot.Client, token string) {
 	var animes model.NewAnimes
 	model.DB.Find(&animes)
@@ -198,11 +199,65 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 	}
 }
 
+// Newanimes
 func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleContainer {
-	contain := &linebot.BubbleContainer{}
+	contain := &linebot.BubbleContainer{
+		Type: linebot.FlexContainerTypeBubble,
+		Hero: &linebot.ImageComponent{
+			Type:       linebot.FlexComponentTypeImage,
+			URL:        anime.ImageSrc,
+			Size:       linebot.FlexImageSizeTypeFull,
+			AspectMode: linebot.FlexImageAspectModeTypeCover,
+		},
+		Body: &linebot.BoxComponent{
+			Type:   linebot.FlexComponentTypeBox,
+			Layout: linebot.FlexBoxLayoutTypeVertical,
+			Contents: []linebot.FlexComponent{
+				&linebot.IconComponent{
+					Type: linebot.FlexComponentTypeIcon,
+					URL:  "https://img.icons8.com/officel/2x/fire-element.png",
+				},
+				&linebot.TextComponent{
+					Type:   linebot.FlexComponentTypeText,
+					Text:   anime.TaiName,
+					Weight: linebot.FlexTextWeightTypeBold,
+					Size:   linebot.FlexTextSizeTypeMd,
+					Margin: linebot.FlexComponentMarginTypeMd,
+					Color:  "#f7af31",
+					Wrap:   true,
+				},
+			},
+		},
+		Footer: &linebot.BoxComponent{
+			Type:   linebot.FlexComponentTypeBox,
+			Layout: linebot.FlexBoxLayoutTypeVertical,
+			Contents: []linebot.FlexComponent{
+				&linebot.ButtonComponent{
+					Type: linebot.FlexComponentTypeButton,
+					Action: &linebot.PostbackAction{
+						Label: "加入收藏清單",
+						Data:  anime.SearchIndex + "&action=add",
+					},
+					Style:  linebot.FlexButtonStyleTypeLink,
+					Color:  "#f7af31",
+					Margin: linebot.FlexComponentMarginTypeXxl,
+				},
+				&linebot.ButtonComponent{
+					Type:  linebot.FlexComponentTypeButton,
+					Style: linebot.FlexButtonStyleTypeLink,
+					Color: "#f7af31",
+					Action: &linebot.URIAction{
+						Label: "作品詳細資料",
+						URI:   fmt.Sprintf("https://acg.gamer.com.tw/acgDetail.php?s=%s", anime.SearchIndex),
+					},
+				},
+			},
+		},
+	}
 	return contain
 }
 
+// Newanimes
 func buildFlexContainBubblesNewAnimes(animes model.NewAnimes) []*linebot.BubbleContainer {
 	var containers []*linebot.BubbleContainer
 	for _, anime := range animes {
@@ -211,6 +266,7 @@ func buildFlexContainBubblesNewAnimes(animes model.NewAnimes) []*linebot.BubbleC
 	return containers
 }
 
+// Newanimes
 func buildNewAnimeslist(animes model.NewAnimes) *linebot.CarouselContainer {
 	container := &linebot.CarouselContainer{
 		Type:     linebot.FlexContainerTypeCarousel,

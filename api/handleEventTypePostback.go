@@ -231,116 +231,19 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 		},
 		Body: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,
-			Layout: linebot.FlexBoxLayoutTypeVertical,
+			Layout: linebot.FlexBoxLayoutTypeBaseline,
 			Contents: []linebot.FlexComponent{
-				&linebot.SeparatorComponent{
-					Margin: linebot.FlexComponentMarginTypeXxl,
+				&linebot.IconComponent{
+					Type: linebot.FlexComponentTypeIcon,
+					URL:  "https://img.icons8.com/officel/2x/fire-element.png",
 				},
-				&linebot.BoxComponent{
-					Type:   linebot.FlexComponentTypeBox,
-					Layout: linebot.FlexBoxLayoutTypeVertical,
-					Contents: []linebot.FlexComponent{
-						&linebot.TextComponent{
-							Type:   linebot.FlexComponentTypeText,
-							Text:   anime.TaiName,
-							Wrap:   true,
-							Weight: linebot.FlexTextWeightTypeBold,
-							Size:   linebot.FlexTextSizeTypeXl,
-							Margin: linebot.FlexComponentMarginTypeMd,
-							Color:  "#f7af31",
-						},
-						&linebot.TextComponent{
-							Type: linebot.FlexComponentTypeText,
-							Text: anime.JapName,
-							Size: linebot.FlexTextSizeTypeXs,
-							Wrap: true,
-						},
-						&linebot.SeparatorComponent{},
-						&linebot.SpacerComponent{},
-					},
-				},
-				&linebot.BoxComponent{
-					Type:   linebot.FlexComponentTypeBox,
-					Layout: linebot.FlexBoxLayoutTypeVertical,
-					Contents: []linebot.FlexComponent{
-						&linebot.BoxComponent{
-							Type:   linebot.FlexComponentTypeBox,
-							Layout: linebot.FlexBoxLayoutTypeVertical,
-							Contents: []linebot.FlexComponent{
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "首播時間",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#f7af31",
-								},
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  anime.Premiere,
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#111111",
-									Align: linebot.FlexComponentAlignTypeEnd,
-								},
-							},
-						},
-						&linebot.BoxComponent{
-							Type:   linebot.FlexComponentTypeBox,
-							Layout: linebot.FlexBoxLayoutTypeVertical,
-							Contents: []linebot.FlexComponent{
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "原著作者",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#f7af31",
-								},
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  anime.Author,
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#111111",
-									Align: linebot.FlexComponentAlignTypeEnd,
-								},
-							},
-						},
-						&linebot.BoxComponent{
-							Type:   linebot.FlexComponentTypeBox,
-							Layout: linebot.FlexBoxLayoutTypeVertical,
-							Contents: []linebot.FlexComponent{
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "作畫公司",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#f7af31",
-								},
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  anime.Firm,
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#111111",
-									Align: linebot.FlexComponentAlignTypeEnd,
-								},
-							},
-						},
-						&linebot.BoxComponent{
-							Type:   linebot.FlexComponentTypeBox,
-							Layout: linebot.FlexBoxLayoutTypeVertical,
-							Contents: []linebot.FlexComponent{
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  "官方網站",
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#f7af31",
-								},
-								&linebot.TextComponent{
-									Type:  linebot.FlexComponentTypeText,
-									Text:  anime.Website,
-									Size:  linebot.FlexTextSizeTypeSm,
-									Color: "#111111",
-									Align: linebot.FlexComponentAlignTypeEnd,
-								},
-							},
-						},
-					},
-					Margin: linebot.FlexComponentMarginTypeXl,
+				&linebot.TextComponent{
+					Type:   linebot.FlexComponentTypeText,
+					Text:   anime.TaiName,
+					Margin: linebot.FlexComponentMarginTypeMd,
+					Size:   linebot.FlexTextSizeTypeMd,
+					Weight: linebot.FlexTextWeightTypeBold,
+					Color:  "#f7af31",
 				},
 			},
 		},

@@ -226,24 +226,30 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 			Type:       linebot.FlexComponentTypeImage,
 			URL:        anime.ImageSrc,
 			Size:       linebot.FlexImageSizeTypeFull,
-			AspectMode: linebot.FlexImageAspectModeTypeCover,
+			AspectMode: linebot.FlexImageAspectModeTypeCover, // 有可能的錯誤1
 		},
 		Body: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,
-			Layout: linebot.FlexBoxLayoutTypeBaseline,
+			Layout: linebot.FlexBoxLayoutTypeVertical,
 			Contents: []linebot.FlexComponent{
-				&linebot.IconComponent{
-					Type: linebot.FlexComponentTypeIcon,
-					URL:  "https://img.icons8.com/officel/2x/fire-element.png",
-				},
-				&linebot.TextComponent{
-					Type:   linebot.FlexComponentTypeText,
-					Text:   anime.TaiName,
-					Weight: linebot.FlexTextWeightTypeBold,
-					Size:   linebot.FlexTextSizeTypeMd,
-					Margin: linebot.FlexComponentMarginTypeMd,
-					Color:  "#f7af31",
-					Wrap:   true,
+				&linebot.BoxComponent{
+					Type:   linebot.FlexComponentTypeBox,
+					Layout: linebot.FlexBoxLayoutTypeBaseline,
+					Contents: []linebot.FlexComponent{
+						&linebot.IconComponent{
+							Type: linebot.FlexComponentTypeIcon,
+							URL:  "https://img.icons8.com/officel/2x/fire-element.png",
+						},
+						&linebot.TextComponent{
+							Type:   linebot.FlexComponentTypeText,
+							Text:   anime.TaiName,
+							Weight: linebot.FlexTextWeightTypeBold,
+							Size:   linebot.FlexTextSizeTypeMd,
+							Margin: linebot.FlexComponentMarginTypeMd,
+							Color:  "#f7af31",
+							Wrap:   true,
+						},
+					},
 				},
 			},
 		},
@@ -254,11 +260,11 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 				&linebot.ButtonComponent{
 					Type:  linebot.FlexComponentTypeButton,
 					Style: linebot.FlexButtonStyleTypeLink,
+					Color: "#f7af31",
 					Action: &linebot.PostbackAction{
 						Label: "加入收藏清單",
 						Data:  anime.SearchIndex + "&action=add",
 					},
-					Color:  "#f7af31",
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},
 				&linebot.ButtonComponent{

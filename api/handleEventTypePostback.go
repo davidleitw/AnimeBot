@@ -69,7 +69,7 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		handleUserlist(users, bot, event.ReplyToken)
 	case "recommand":
 		// 新番推薦
-		handleRecommand(bot, event.Source.UserID)
+		handleRecommand(bot, event.ReplyToken)
 	}
 
 	log.Println("user = ", userID, ", search = ", search, ", action = ", action)

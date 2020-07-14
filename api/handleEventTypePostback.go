@@ -67,6 +67,7 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
 		handleUserlist(users, bot, event.ReplyToken)
+
 	case "recommand":
 		// 新番推薦
 		handleRecommand(bot, event.ReplyToken)
@@ -86,10 +87,7 @@ func handleRecommand(bot *linebot.Client, token string) {
 	flex := buildNewAnimeslist(animesSubset)
 	_, err := bot.ReplyMessage(
 		token,
-		linebot.NewFlexMessage(
-			"新番推薦",
-			flex,
-		),
+		linebot.NewFlexMessage("新番推薦", flex),
 	).Do()
 	if err != nil {
 		log.Println("New anime error = ", err)
@@ -206,7 +204,6 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 	contain := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
-			Type:       linebot.FlexComponentTypeImage,
 			URL:        anime.ImageSrc,
 			Size:       linebot.FlexImageSizeTypeFull,
 			AspectMode: linebot.FlexImageAspectModeTypeCover,

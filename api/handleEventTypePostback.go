@@ -80,7 +80,6 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		//flex := buildFlexContainBubblesWithNewAnimes(animesSubset[0])
 		_, err := bot.ReplyMessage(
 			event.ReplyToken,
-			linebot.NewTextMessage("測試reply是否正常"),
 			linebot.NewFlexMessage("新番推薦", flex),
 		).Do()
 		if err != nil {
@@ -225,8 +224,10 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 	contain := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
-			URL:  anime.ImageSrc,
-			Size: linebot.FlexImageSizeType5xl,
+			Type:       linebot.FlexComponentTypeImage,
+			URL:        anime.ImageSrc,
+			Size:       linebot.FlexImageSizeTypeFull,
+			AspectMode: linebot.FlexImageAspectModeTypeCover, // 有可能的錯誤1
 		},
 		Body: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,

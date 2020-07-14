@@ -236,10 +236,6 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 					Type:   linebot.FlexComponentTypeBox,
 					Layout: linebot.FlexBoxLayoutTypeBaseline,
 					Contents: []linebot.FlexComponent{
-						&linebot.IconComponent{
-							Type: linebot.FlexComponentTypeIcon,
-							URL:  "https://img.icons8.com/officel/2x/fire-element.png",
-						},
 						&linebot.TextComponent{
 							Type:   linebot.FlexComponentTypeText,
 							Text:   anime.TaiName,

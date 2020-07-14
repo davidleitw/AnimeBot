@@ -15,6 +15,16 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 	data := event.Postback.Data
 	search, action := handlePostbackData(data)
 	switch action {
+	case "help":
+		_, err := bot.ReplyMessage(
+			event.ReplyToken,
+			linebot.NewTextMessage(
+				helpMessage,
+			),
+		).Do()
+		if err != nil {
+			log.Println("!help message error = ", err)
+		}
 	case "add":
 		var users []model.User
 		model.DB.Where("user_id = ?", event.Source.UserID).Find(&users)
@@ -70,7 +80,17 @@ func handleRecommand(bot *linebot.Client, token string) {
 	model.DB.Find(&animes)
 	sort.Sort(animes)
 	animesSubset := animes[:10]
-	buildNewAnimeslist(animesSubset)
+	flex := buildNewAnimeslist(animesSubset)
+	_, err := bot.ReplyMessage(
+		token,
+		linebot.NewFlexMessage(
+			"新番推薦",
+			flex,
+		),
+	).Do()
+	if err != nil {
+		log.Println("New anime error = ", err)
+	}
 }
 
 // search&action=xxx

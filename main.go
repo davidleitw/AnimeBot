@@ -22,5 +22,4 @@ func main() {
 	// 	fmt.Println(val.JapName, "=> len: ", len(val.JapName))
 	// }
 	// model.CrewNewAnimeInfo()
-
 }

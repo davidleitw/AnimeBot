@@ -200,17 +200,36 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 }
 
 // Newanimes
+func buildNewAnimeslist(animes model.NewAnimes) *linebot.CarouselContainer {
+	container := &linebot.CarouselContainer{
+		Type:     linebot.FlexContainerTypeCarousel,
+		Contents: buildFlexContainBubblesNewAnimes(animes),
+	}
+	return container
+}
+
+// Newanimes
+func buildFlexContainBubblesNewAnimes(animes model.NewAnimes) []*linebot.BubbleContainer {
+	var containers []*linebot.BubbleContainer
+	for _, anime := range animes {
+		containers = append(containers, buildFlexContainBubblesWithNewAnimes(anime))
+	}
+	return containers
+}
+
+// Newanimes
 func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleContainer {
 	contain := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
+			Type:       linebot.FlexComponentTypeImage,
 			URL:        anime.ImageSrc,
 			Size:       linebot.FlexImageSizeTypeFull,
 			AspectMode: linebot.FlexImageAspectModeTypeCover,
 		},
 		Body: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,
-			Layout: linebot.FlexBoxLayoutTypeVertical,
+			Layout: linebot.FlexBoxLayoutTypeBaseline,
 			Contents: []linebot.FlexComponent{
 				&linebot.IconComponent{
 					Type: linebot.FlexComponentTypeIcon,
@@ -232,12 +251,12 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 			Layout: linebot.FlexBoxLayoutTypeVertical,
 			Contents: []linebot.FlexComponent{
 				&linebot.ButtonComponent{
-					Type: linebot.FlexComponentTypeButton,
+					Type:  linebot.FlexComponentTypeButton,
+					Style: linebot.FlexButtonStyleTypeLink,
 					Action: &linebot.PostbackAction{
 						Label: "加入收藏清單",
 						Data:  anime.SearchIndex + "&action=add",
 					},
-					Style:  linebot.FlexButtonStyleTypeLink,
 					Color:  "#f7af31",
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},
@@ -254,24 +273,6 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 		},
 	}
 	return contain
-}
-
-// Newanimes
-func buildFlexContainBubblesNewAnimes(animes model.NewAnimes) []*linebot.BubbleContainer {
-	var containers []*linebot.BubbleContainer
-	for _, anime := range animes {
-		containers = append(containers, buildFlexContainBubblesWithNewAnimes(anime))
-	}
-	return containers
-}
-
-// Newanimes
-func buildNewAnimeslist(animes model.NewAnimes) *linebot.CarouselContainer {
-	container := &linebot.CarouselContainer{
-		Type:     linebot.FlexContainerTypeCarousel,
-		Contents: buildFlexContainBubblesNewAnimes(animes),
-	}
-	return container
 }
 
 // build特定使用者清單

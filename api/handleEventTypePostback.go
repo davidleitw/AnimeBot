@@ -84,7 +84,8 @@ func handleRecommand(bot *linebot.Client, token string) {
 	animesSubset := animes[:10]
 	log.Println(animesSubset)
 	log.Println("len = ", len(animesSubset))
-	flex := buildNewAnimeslist(animesSubset)
+	//flex := buildNewAnimeslist(animesSubset)
+	flex := buildFlexContainBubblesWithNewAnimes(animesSubset[0])
 	_, err := bot.ReplyMessage(
 		token,
 		linebot.NewFlexMessage("新番推薦", flex),

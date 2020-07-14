@@ -223,10 +223,10 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 	contain := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
-			Type:       linebot.FlexComponentTypeImage,
-			URL:        anime.ImageSrc,
-			Size:       linebot.FlexImageSizeTypeFull,
-			AspectMode: linebot.FlexImageAspectModeTypeCover, // 有可能的錯誤1
+			//Type:       linebot.FlexComponentTypeImage,
+			URL:  anime.ImageSrc,
+			Size: linebot.FlexImageSizeTypeFull,
+			//AspectMode: linebot.FlexImageAspectModeTypeCover, // 有可能的錯誤1
 		},
 		Body: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,
@@ -236,12 +236,16 @@ func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleC
 					Type:   linebot.FlexComponentTypeBox,
 					Layout: linebot.FlexBoxLayoutTypeBaseline,
 					Contents: []linebot.FlexComponent{
+						&linebot.IconComponent{
+							Type: linebot.FlexComponentTypeIcon,
+							URL:  "https://img.icons8.com/officel/2x/fire-element.png",
+						},
 						&linebot.TextComponent{
 							Type:   linebot.FlexComponentTypeText,
 							Text:   anime.TaiName,
-							Weight: linebot.FlexTextWeightTypeBold,
-							Size:   linebot.FlexTextSizeTypeMd,
 							Margin: linebot.FlexComponentMarginTypeMd,
+							Size:   linebot.FlexTextSizeTypeMd,
+							Weight: linebot.FlexTextWeightTypeBold,
 							Color:  "#f7af31",
 							Wrap:   true,
 						},

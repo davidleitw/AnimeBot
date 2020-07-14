@@ -10,6 +10,8 @@ import (
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
+const helpMessage = "歡迎使用Anime Bot服務!\n" + "此服務可以提供動漫作品查詢, 並將其列入喜好清單內\n" + "如果想要查詢作品請輸入@作品名稱, 即可跳出搜尋結果\n" + "如果以關鍵字搜尋不到可能是因為作品翻譯問題, 可以輸入巴哈姆特動畫資料庫該作品的網址做查詢\n" + "ex: https://acg.gamer.com.tw/acgDetail.php?s=110596\n" + "如果想查看現在喜好清單內的作品可以點擊下方清單按鈕或者輸入@清單\n"
+
 func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
@@ -20,17 +22,8 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
 				linebot.NewTextMessage(
-					`歡迎使用Anime Bot服務!
-
-此服務可以提供動漫作品查詢, 並將其列入喜好清單內
-						
-如果想要查詢作品請輸入@作品名稱, 即可跳出搜尋結果
-					
-如果以關鍵字搜尋不到可能是因為作品翻譯問題, 可以輸入巴哈姆特動畫資料庫該作品的網址做查詢
-					
-ex: https://acg.gamer.com.tw/acgDetail.php?s=110596
-				
-如果想查看現在喜好清單內的作品可以點擊下方清單按鈕或者輸入@清單`),
+					helpMessage,
+				),
 			).Do()
 			if err != nil {
 				log.Println("!help message error = ", err)

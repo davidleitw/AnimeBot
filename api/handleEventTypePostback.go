@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"log"
+	"sort"
 	"strings"
 
 	"github.com/davidleitw/AnimeBot/model"
@@ -58,10 +59,18 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		handleUserlist(users, bot, event.ReplyToken)
 	case "recommand":
 		// 新番推薦
-
+		handleRecommand(bot, event.Source.UserID)
 	}
 
 	log.Println("user = ", userID, ", search = ", search, ", action = ", action)
+}
+
+func handleRecommand(bot *linebot.Client, token string) {
+	var animes model.NewAnimes
+	model.DB.Find(&animes)
+	sort.Sort(animes)
+	animesSubset := animes[:10]
+	buildNewAnimeslist(animesSubset)
 }
 
 // search&action=xxx
@@ -102,7 +111,7 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("show function empty error message!")
 		}
 	case l <= 10:
-		flex := handleShowlist(users)
+		flex := buildShowlist(users)
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex),
@@ -111,8 +120,8 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("Show list error = ", err)
 		}
 	case l > 10 && l <= 20:
-		flex1 := handleShowlist(users[:10])
-		flex2 := handleShowlist(users[10:l])
+		flex1 := buildShowlist(users[:10])
+		flex2 := buildShowlist(users[10:l])
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex1),
@@ -122,9 +131,9 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("Show list error = ", err)
 		}
 	case l > 20 && l <= 30:
-		flex1 := handleShowlist(users[:10])
-		flex2 := handleShowlist(users[10:20])
-		flex3 := handleShowlist(users[20:l])
+		flex1 := buildShowlist(users[:10])
+		flex2 := buildShowlist(users[10:20])
+		flex3 := buildShowlist(users[20:l])
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex1),
@@ -135,10 +144,10 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("Show list error = ", err)
 		}
 	case l > 30 && l <= 40:
-		flex1 := handleShowlist(users[:10])
-		flex2 := handleShowlist(users[10:20])
-		flex3 := handleShowlist(users[20:30])
-		flex4 := handleShowlist(users[30:l])
+		flex1 := buildShowlist(users[:10])
+		flex2 := buildShowlist(users[10:20])
+		flex3 := buildShowlist(users[20:30])
+		flex4 := buildShowlist(users[30:l])
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex1),
@@ -150,11 +159,11 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 			log.Println("Show list error = ", err)
 		}
 	case l > 40 && l <= 50:
-		flex1 := handleShowlist(users[:10])
-		flex2 := handleShowlist(users[10:20])
-		flex3 := handleShowlist(users[20:30])
-		flex4 := handleShowlist(users[30:40])
-		flex5 := handleShowlist(users[40:l])
+		flex1 := buildShowlist(users[:10])
+		flex2 := buildShowlist(users[10:20])
+		flex3 := buildShowlist(users[20:30])
+		flex4 := buildShowlist(users[30:40])
+		flex5 := buildShowlist(users[40:l])
 		_, err := bot.ReplyMessage(
 			token,
 			linebot.NewFlexMessage("收集清單 page 1", flex1),
@@ -169,8 +178,29 @@ func handleUserlist(users []model.User, bot *linebot.Client, token string) {
 	}
 }
 
+func buildFlexContainBubblesWithNewAnimes(anime model.NewAnime) *linebot.BubbleContainer {
+	contain := &linebot.BubbleContainer{}
+	return contain
+}
+
+func buildFlexContainBubblesNewAnimes(animes model.NewAnimes) []*linebot.BubbleContainer {
+	var containers []*linebot.BubbleContainer
+	for _, anime := range animes {
+		containers = append(containers, buildFlexContainBubblesWithNewAnimes(anime))
+	}
+	return containers
+}
+
+func buildNewAnimeslist(animes model.NewAnimes) *linebot.CarouselContainer {
+	container := &linebot.CarouselContainer{
+		Type:     linebot.FlexContainerTypeCarousel,
+		Contents: buildFlexContainBubblesNewAnimes(animes),
+	}
+	return container
+}
+
 // build特定使用者清單
-func handleShowlist(users []model.User) *linebot.CarouselContainer {
+func buildShowlist(users []model.User) *linebot.CarouselContainer {
 	container := &linebot.CarouselContainer{
 		Type:     linebot.FlexContainerTypeCarousel,
 		Contents: buildFlexContainBubbles(users),

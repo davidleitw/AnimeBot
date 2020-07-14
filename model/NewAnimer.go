@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"sort"
 	"strconv"
 	"time"
 
@@ -28,6 +29,33 @@ type NewAnime struct {
 	Firm        string `gorm:"size:60;"`  // 製作廠商
 	Agent       string `gorm:"size:60;"`  // 台灣代理
 	Website     string `gorm:"size:150;"` // 官方網站
+}
+
+type NewAnimes []NewAnime
+
+// Sort interface 三必要條件
+
+func (na NewAnimes) Len() int { return len(na) }
+
+func (na NewAnimes) Less(i, j int) bool {
+	return (na[i].Popularity + na[i].Followers) > (na[j].Popularity + na[j].Followers)
+}
+
+func (na NewAnimes) Swap(i, j int) {
+	na[i], na[j] = na[j], na[i]
+}
+
+func NewAnimeSortTest() {
+	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	ConnectDataBase(dbname)
+	var nas NewAnimes
+	DB.Find(&nas)
+	fmt.Println(nas)
+
+	sort.Sort(nas)
+	for _, anime := range nas {
+		fmt.Println(anime.Popularity)
+	}
 }
 
 func CreateNewAnimeTable() {

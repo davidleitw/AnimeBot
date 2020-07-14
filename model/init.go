@@ -11,9 +11,13 @@ import (
 var DB *gorm.DB
 
 func ConnectDataBase(dbname string) {
-	db, _ := gorm.Open("postgres", dbname)
+	db, err := gorm.Open("postgres", dbname)
+	if err != nil {
+		fmt.Println("Connect database error = ", err)
+	} else {
+		fmt.Println("Connect database successfully!")
 
-	fmt.Println("Connect database successfully!")
+	}
 	DB = db
 	migration()
 }

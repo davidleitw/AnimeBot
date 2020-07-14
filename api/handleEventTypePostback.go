@@ -81,7 +81,7 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		_, err := bot.ReplyMessage(
 			event.ReplyToken,
 			linebot.NewTextMessage("測試reply是否正常"),
-			//linebot.NewFlexMessage("新番推薦", flex),
+			linebot.NewFlexMessage("新番推薦", flex),
 		).Do()
 		if err != nil {
 			log.Println("New anime error = ", err)

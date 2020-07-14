@@ -71,20 +71,6 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 	case "recommand":
 		// 新番推薦
 		handleRecommand(bot, event.ReplyToken)
-		var animes model.NewAnimes
-		model.DB.Find(&animes)
-		sort.Sort(animes)
-		animesSubset := animes[:10]
-		flex := buildNewAnimeslist(animesSubset)
-		log.Println("flex = ", flex)
-		//flex := buildFlexContainBubblesWithNewAnimes(animesSubset[0])
-		_, err := bot.ReplyMessage(
-			event.ReplyToken,
-			linebot.NewFlexMessage("新番推薦", flex),
-		).Do()
-		if err != nil {
-			log.Println("New anime error = ", err)
-		}
 	}
 
 	log.Println("user = ", userID, ", search = ", search, ", action = ", action)
@@ -92,7 +78,18 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 
 // Newanimes
 func handleRecommand(bot *linebot.Client, token string) {
-
+	var animes model.NewAnimes
+	model.DB.Find(&animes)
+	sort.Sort(animes)
+	animesSubset := animes[:10]
+	flex := buildNewAnimeslist(animesSubset)
+	_, err := bot.ReplyMessage(
+		token,
+		linebot.NewFlexMessage("新番推薦", flex),
+	).Do()
+	if err != nil {
+		log.Println("New anime error = ", err)
+	}
 }
 
 // search&action=xxx

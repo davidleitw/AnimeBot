@@ -81,6 +81,8 @@ func handleRecommand(bot *linebot.Client, token string) {
 	model.DB.Find(&animes)
 	sort.Sort(animes)
 	animesSubset := animes[:10]
+	log.Println(animesSubset)
+	log.Println("len = ", len(animesSubset))
 	flex := buildNewAnimeslist(animesSubset)
 	_, err := bot.ReplyMessage(
 		token,

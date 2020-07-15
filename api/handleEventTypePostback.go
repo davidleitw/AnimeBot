@@ -300,38 +300,28 @@ func buildBubbleWithAnimeForList(anime model.ACG) *linebot.BubbleContainer {
 	container := &linebot.BubbleContainer{
 		Type: linebot.FlexContainerTypeBubble,
 		Hero: &linebot.ImageComponent{
-			URL:  anime.Image,
-			Size: linebot.FlexImageSizeType5xl,
+			Type:       linebot.FlexComponentTypeImage,
+			URL:        anime.Image,
+			Size:       linebot.FlexImageSizeTypeFull,
+			AspectMode: linebot.FlexImageAspectModeTypeCover, // 有可能的錯誤1
 		},
 		Body: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,
-			Layout: linebot.FlexBoxLayoutTypeVertical,
+			Layout: linebot.FlexBoxLayoutTypeBaseline,
 			Contents: []linebot.FlexComponent{
-				&linebot.BoxComponent{
-					Type:   linebot.FlexComponentTypeBox,
-					Layout: linebot.FlexBoxLayoutTypeVertical,
-					Contents: []linebot.FlexComponent{
-						&linebot.TextComponent{
-							Type:   linebot.FlexComponentTypeText,
-							Text:   anime.TaiName,
-							Wrap:   true,
-							Weight: linebot.FlexTextWeightTypeBold,
-							Size:   linebot.FlexTextSizeTypeXl,
-							Margin: linebot.FlexComponentMarginTypeMd,
-							Color:  "#f7af31",
-						},
-						&linebot.TextComponent{
-							Type: linebot.FlexComponentTypeText,
-							Text: anime.JapName,
-							Size: linebot.FlexTextSizeTypeXs,
-							Wrap: true,
-						},
-						&linebot.SeparatorComponent{},
-						&linebot.SpacerComponent{},
-					},
+				&linebot.IconComponent{
+					Type: linebot.FlexComponentTypeIcon,
+					URL:  "https://img.icons8.com/officel/2x/fire-element.png",
+				},
+				&linebot.TextComponent{
+					Type:   linebot.FlexComponentTypeText,
+					Text:   anime.TaiName,
+					Margin: linebot.FlexComponentMarginTypeMd,
+					Size:   linebot.FlexTextSizeTypeMd,
+					Weight: linebot.FlexTextWeightTypeBold,
+					Color:  "#f7af31",
 				},
 			},
-			Margin: linebot.FlexComponentMarginTypeXxl,
 		},
 		Footer: &linebot.BoxComponent{
 			Type:   linebot.FlexComponentTypeBox,
@@ -339,24 +329,22 @@ func buildBubbleWithAnimeForList(anime model.ACG) *linebot.BubbleContainer {
 			Contents: []linebot.FlexComponent{
 				&linebot.ButtonComponent{
 					Type:  linebot.FlexComponentTypeButton,
-					Style: linebot.FlexButtonStyleTypePrimary,
+					Style: linebot.FlexButtonStyleTypeLink,
+					Color: "#f7af31",
+					Action: &linebot.PostbackAction{
+						Label: "加入收藏清單",
+						Data:  anime.SearchIndex + "&action=add",
+					},
+					Margin: linebot.FlexComponentMarginTypeXxl,
+				},
+				&linebot.ButtonComponent{
+					Type:  linebot.FlexComponentTypeButton,
+					Style: linebot.FlexButtonStyleTypeLink,
 					Color: "#f7af31",
 					Action: &linebot.URIAction{
 						Label: "作品詳細資料",
 						URI:   fmt.Sprintf("https://acg.gamer.com.tw/acgDetail.php?s=%s", anime.SearchIndex),
 					},
-					Margin: linebot.FlexComponentMarginTypeXl,
-				},
-				&linebot.ButtonComponent{
-					Type:  linebot.FlexComponentTypeButton,
-					Style: linebot.FlexButtonStyleTypePrimary,
-					Color: "#f7af31",
-					Action: &linebot.PostbackAction{
-						Label:       "移除",
-						Data:        anime.SearchIndex + "&action=delete",
-						DisplayText: "移除此作品",
-					},
-					Margin: linebot.FlexComponentMarginTypeXl,
 				},
 			},
 		},

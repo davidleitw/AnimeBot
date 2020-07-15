@@ -311,7 +311,7 @@ func buildBubbleWithAnimeForList(anime model.ACG) *linebot.BubbleContainer {
 			Contents: []linebot.FlexComponent{
 				&linebot.IconComponent{
 					Type: linebot.FlexComponentTypeIcon,
-					URL:  "https://img.icons8.com/officel/2x/fire-element.png",
+					URL:  "https://img.icons8.com/ios-filled/2x/love-book.png",
 				},
 				&linebot.TextComponent{
 					Type:   linebot.FlexComponentTypeText,

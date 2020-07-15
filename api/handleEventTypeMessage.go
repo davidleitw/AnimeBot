@@ -10,7 +10,11 @@ import (
 	"github.com/line/line-bot-sdk-go/linebot"
 )
 
-const helpMessage = "歡迎使用Anime Bot服務!\n\n" + "此服務可以提供動漫作品查詢, 並將其列入喜好清單內\n\n" + "如果想要查詢作品請輸入@作品名稱, 即可跳出搜尋結果\n\n" + "如果以關鍵字搜尋不到可能是因為作品翻譯問題, 可以輸入巴哈姆特動畫資料庫該作品的網址做查詢\n" + "ex: https://acg.gamer.com.tw/acgDetail.php?s=110596\n\n" + "查看現在喜好清單內的作品請點擊下方清單按鈕或者輸入@清單\n\n" + "參考使用說明請輸入help(大小寫皆可)\n"
+// 針對初次使用或者輸入help的人發送的message
+const FirstHelpMessage = "歡迎使用Anime Bot服務!\n" + "此服務可以提供動漫作品查詢，並將其列入收藏清單內\n\n" + "以作品名稱作為關鍵字查詢請輸入@作品名稱\n\n" + "以作者名稱作為關鍵字查詢請輸入!作者名稱\n\n" + "如果上述兩種方法都無法找到指定的作品，可以輸入巴哈姆特動畫資料庫該作品的網址搜尋，即可獲得指定的作品\n" + "ex: https://acg.gamer.com.tw/acgDetail.php?s=110596\n\n" + "查看現在喜好清單內的作品請點擊下方清單按鈕或者輸入@清單\n\n" + "參考使用說明請輸入help(大小寫皆可)\n"
+
+// 針對輸入的文字並沒有在功能選單上的使用者所回覆的message
+const SencondHelpMessage = "您所輸入的指令並不在預設指令中。\n\n" + "以作品名稱作為關鍵字查詢請輸入@作品名稱\n\n" + "以作者名稱作為關鍵字查詢請輸入!作者名稱\n\n" + "如果上述兩種方法都無法找到指定的作品，可以輸入巴哈姆特動畫資料庫該作品的網址搜尋，即可獲得指定的作品\n" + "ex: https://acg.gamer.com.tw/acgDetail.php?s=110596\n\n" + "查看現在喜好清單內的作品請點擊下方清單按鈕或者輸入@清單\n\n" + "參考使用說明請輸入help(大小寫皆可)\n"
 
 func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 	switch message := event.Message.(type) {
@@ -20,7 +24,7 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 		case strings.EqualFold(Message, "help") || Message == "!help" || Message == "-h" || Message == "-help":
 			_, err := bot.ReplyMessage(
 				event.ReplyToken,
-				linebot.NewTextMessage(helpMessage),
+				linebot.NewTextMessage(FirstHelpMessage),
 			).Do()
 			if err != nil {
 				log.Println("!help message error = ", err)
@@ -126,6 +130,13 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 
 		// 非指令區
 		default:
+			_, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewTextMessage(SencondHelpMessage),
+			).Do()
+			if err != nil {
+				log.Println("!help message error = ", err)
+			}
 		}
 	}
 }

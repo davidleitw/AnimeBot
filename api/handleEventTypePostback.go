@@ -19,7 +19,7 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 		_, err := bot.ReplyMessage(
 			event.ReplyToken,
 			linebot.NewTextMessage(
-				helpMessage,
+				FirstHelpMessage,
 			),
 		).Do()
 		if err != nil {

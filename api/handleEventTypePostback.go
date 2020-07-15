@@ -331,9 +331,9 @@ func buildBubbleWithAnimeForList(anime model.ACG) *linebot.BubbleContainer {
 					Type:  linebot.FlexComponentTypeButton,
 					Style: linebot.FlexButtonStyleTypeLink,
 					Color: "#f7af31",
-					Action: &linebot.PostbackAction{
-						Label: "加入收藏清單",
-						Data:  anime.SearchIndex + "&action=add",
+					Action: &linebot.URIAction{
+						Label: "作品詳細資料",
+						URI:   fmt.Sprintf("https://acg.gamer.com.tw/acgDetail.php?s=%s", anime.SearchIndex),
 					},
 					Margin: linebot.FlexComponentMarginTypeXxl,
 				},
@@ -341,9 +341,10 @@ func buildBubbleWithAnimeForList(anime model.ACG) *linebot.BubbleContainer {
 					Type:  linebot.FlexComponentTypeButton,
 					Style: linebot.FlexButtonStyleTypeLink,
 					Color: "#f7af31",
-					Action: &linebot.URIAction{
-						Label: "作品詳細資料",
-						URI:   fmt.Sprintf("https://acg.gamer.com.tw/acgDetail.php?s=%s", anime.SearchIndex),
+					Action: &linebot.PostbackAction{
+						Label:       "移除",
+						Data:        anime.SearchIndex + "&action=delete",
+						DisplayText: "移除此作品",
 					},
 				},
 			},

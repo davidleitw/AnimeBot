@@ -8,6 +8,7 @@ import (
 type User struct {
 	UserID      string `gorm:"primary_key; size:50;"`
 	SearchIndex string `gorm:"primary_key; size:50;"`
+	Handle      bool   `gorm:"not null;"`
 }
 
 func CreateUserTable() {

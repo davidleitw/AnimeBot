@@ -105,6 +105,7 @@ func handleAddItem(userID, search string) error {
 	var user model.User
 	user.UserID = userID
 	user.SearchIndex = search
+	user.Handle = false
 	err := model.DB.Create(&user).Error
 	return err
 }

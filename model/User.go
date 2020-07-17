@@ -21,6 +21,9 @@ func CreateUserTable() {
 }
 
 func SearchUserInfo(userID string) {
+	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	ConnectDataBase(dbname)
+
 	var users []User
 	DB.Where("user_id = ?", userID).Find(&users)
 	for _, user := range users {

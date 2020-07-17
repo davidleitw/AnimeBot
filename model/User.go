@@ -19,3 +19,14 @@ func CreateUserTable() {
 	}
 	DB.CreateTable(&User{})
 }
+
+func SearchUserInfo(userID string) {
+	var users []User
+	DB.Where("user_id = ?", userID).Find(&users)
+	for _, user := range users {
+		var anime ACG
+		search_index := user.SearchIndex
+		DB.Where("search_index = ?", search_index).First(&anime)
+		fmt.Println(anime.TaiName)
+	}
+}

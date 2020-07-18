@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/davidleitw/AnimeBot/model"
+	"fmt"
+
+	"github.com/davidleitw/AnimeBot/server"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/joho/godotenv/autoload"
 )

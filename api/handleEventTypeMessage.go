@@ -3,7 +3,11 @@ package api
 import (
 	"fmt"
 	"log"
+	"math/rand"
+	"os"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/davidleitw/AnimeBot/model"
 
@@ -327,6 +331,36 @@ func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
 
 func handleRandAnime() model.ACG {
 	var anime model.ACG
+	var year string
+	rand.Seed(time.Now().Unix())
 
+	// 從 2000年到2020年先選擇一年 0 ~ 20
+	ly := rand.Intn(21)
+	if ly >= 0 && ly < 10 {
+		year = "200" + strconv.Itoa(ly)
+	} else {
+		year = "20" + strconv.Itoa(ly)
+	}
+
+	// 隨機存取符合條件的一部作品
+	model.DB.Where("premiere LIKE ?", year+"%").Order("RAND()").Find(&anime)
 	return anime
+}
+
+func handleRandAnimeTest() {
+	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	model.ConnectDataBase(dbname)
+
+	for i := 0; i < 10; i++ {
+		var anime model.ACG
+		var year string
+		rand.Seed(time.Now().Unix())
+		// 從 2000年到2020年先選擇一年 0 ~ 20
+
+		// 隨機存取符合條件的一部作品
+		model.DB.Where("premiere LIKE ?", year+"%").Order("RANDOM()").Find(&anime)
+
+		fmt.Printf("name of anime: %s, time of anime: %s, rand choose year: %s\n", anime.TaiName, anime.Premiere, year)
+	}
+
 }

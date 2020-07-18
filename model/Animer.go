@@ -32,8 +32,17 @@ type ACG struct {
 	Website     string `gorm:"size:150;"`                       // 官方網站
 }
 
-func (anime ACG) String() {
-	fmt.Printf("anime name: %s, time of this anime = %s\n", anime.TaiName, anime.Premiere)
+// test function
+func SearchWithTimeTest() {
+	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	ConnectDataBase(dbname)
+
+	var animes []ACG
+	DB.Where("premiere LIKE ?", "2007-"+"%").Limit(3).Find(&animes)
+	fmt.Println("len of animes = ", len(animes))
+	for _, anime := range animes {
+		fmt.Printf("name of anime = %s, time of anime = %s\n", anime.TaiName, anime.Premiere)
+	}
 }
 
 func (anime ACG) IsEmpty() bool {

@@ -20,6 +20,16 @@ func HandleEventTypeMessage(event *linebot.Event, bot *linebot.Client) {
 	switch message := event.Message.(type) {
 	case *linebot.TextMessage:
 		switch Message := message.Text; {
+		// 每日一抽, 從人氣高的作品隨機抽出一件
+		case Message == "抽":
+			anime := handleRandAnime()
+			_, err := bot.ReplyMessage(
+				event.ReplyToken,
+				linebot.NewFlexMessage("抽", buildFlexMessageWithAnime(anime)),
+			).Do()
+			if err != nil {
+				log.Println("send rand anime information area error = ", err)
+			}
 		// 使用說明
 		case strings.EqualFold(Message, "help") || Message == "!help" || Message == "-h" || Message == "-help":
 			_, err := bot.ReplyMessage(
@@ -313,4 +323,10 @@ func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
 		},
 	}
 	return container
+}
+
+func handleRandAnime() model.ACG {
+	var anime model.ACG
+
+	return anime
 }

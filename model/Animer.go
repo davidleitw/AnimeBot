@@ -32,6 +32,10 @@ type ACG struct {
 	Website     string `gorm:"size:150;"`                       // 官方網站
 }
 
+func (anime ACG) String() {
+	fmt.Printf("anime name: %s, time of this anime = %s\n", anime.TaiName, anime.Premiere)
+}
+
 func (anime ACG) IsEmpty() bool {
 	return reflect.DeepEqual(anime, ACG{})
 }
@@ -231,39 +235,7 @@ func SearchAnimeInfoWithindex(_url string) (ACG, error) {
 		return anime, err
 	}
 
-	if len(anime.Agent) == 0 {
-		anime.Agent = "nil"
-	}
-	if len(anime.Author) == 0 {
-		anime.Author = "nil"
-	}
-	if len(anime.Class) == 0 {
-		anime.Class = "nil"
-	}
-	if len(anime.Director) == 0 {
-		anime.Director = "nil"
-	}
-	if len(anime.Firm) == 0 {
-		anime.Firm = "nil"
-	}
-	if len(anime.Image) == 0 {
-		anime.Image = "nil"
-	}
-	if len(anime.JapName) == 0 {
-		anime.JapName = "nil"
-	}
-	if len(anime.Premiere) == 0 {
-		anime.Premiere = "nil"
-	}
-	if len(anime.SearchIndex) == 0 {
-		anime.SearchIndex = "nil"
-	}
-	if len(anime.TaiName) == 0 {
-		anime.TaiName = "nil"
-	}
-	if len(anime.Website) == 0 {
-		anime.Website = "nil"
-	}
+	VerifyAnime(&anime)
 
 	return anime, nil
 }
@@ -319,47 +291,6 @@ func SearchAnimeInfoWithAuthor(author string) []ACG {
 	DB.Where("author LIKE ?", "%"+author+"%").Limit(10).Find(&animes)
 	for idx := 0; idx < len(animes); idx++ {
 		VerifyAnime(&animes[idx])
-	}
-	return animes
-}
-
-func TestSql(key string) []ACG {
-	var animes []ACG
-	DB.Where("tai_name LIKE ?", "%"+key+"%").Limit(10).Find(&animes)
-	for idx := 0; idx < len(animes); idx++ {
-		if len(animes[idx].Agent) == 0 {
-			animes[idx].Agent = "nil"
-		}
-		if len(animes[idx].Author) == 0 {
-			animes[idx].Author = "nil"
-		}
-		if len(animes[idx].Class) == 0 {
-			animes[idx].Class = "nil"
-		}
-		if len(animes[idx].Director) == 0 {
-			animes[idx].Director = "nil"
-		}
-		if len(animes[idx].Firm) == 0 {
-			animes[idx].Firm = "nil"
-		}
-		if len(animes[idx].Image) == 0 {
-			animes[idx].Image = "nil"
-		}
-		if len(animes[idx].JapName) == 0 {
-			animes[idx].JapName = "nil"
-		}
-		if len(animes[idx].Premiere) == 0 {
-			animes[idx].Premiere = "nil"
-		}
-		if len(animes[idx].SearchIndex) == 0 {
-			animes[idx].SearchIndex = "nil"
-		}
-		if len(animes[idx].TaiName) == 0 {
-			animes[idx].TaiName = "nil"
-		}
-		if len(animes[idx].Website) == 0 {
-			animes[idx].Website = "nil"
-		}
 	}
 	return animes
 }

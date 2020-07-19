@@ -337,8 +337,10 @@ func handleRandAnime() model.ACG {
 	// 從 2000年到2020年先選擇一年 0 ~ 20
 	ly := rand.Intn(21)
 	if ly >= 0 && ly < 10 {
+		// 2001
 		year = "200" + strconv.Itoa(ly)
 	} else {
+		// 2010
 		year = "20" + strconv.Itoa(ly)
 	}
 

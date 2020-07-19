@@ -85,6 +85,7 @@ func handleRecommand(bot *linebot.Client, token string) {
 	flex := buildNewAnimesList(animesSubset)
 	_, err := bot.ReplyMessage(
 		token,
+		linebot.NewTextMessage("2020年夏季新番推薦如下:"),
 		linebot.NewFlexMessage("新番推薦", flex),
 	).Do()
 	if err != nil {

@@ -34,7 +34,6 @@ type NewAnime struct {
 type NewAnimes []NewAnime
 
 // Sort interface 三必要條件
-
 func (na NewAnimes) Len() int { return len(na) }
 
 func (na NewAnimes) Less(i, j int) bool {
@@ -51,7 +50,6 @@ func NewAnimeSortTest() {
 	var nas NewAnimes
 	DB.Find(&nas)
 	fmt.Println(nas)
-
 	sort.Sort(nas)
 	for _, anime := range nas {
 		fmt.Println(anime.Popularity)

@@ -15,5 +15,4 @@ func main() {
 		fmt.Println("Server running error: ", err)
 	}
 
-	// model.SearchWithTimeTest()
 }

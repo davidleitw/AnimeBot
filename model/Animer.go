@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
@@ -30,30 +31,73 @@ type ACG struct {
 	Firm        string `gorm:"size:60;"`                        // 製作廠商
 	Agent       string `gorm:"size:60;"`                        // 台灣代理
 	Website     string `gorm:"size:150;"`                       // 官方網站
-}
-
-// test function
-func SearchWithTimeTest() {
-	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
-	ConnectDataBase(dbname)
-
-	var animes []ACG
-	DB.Where("premiere LIKE ?", "2007-"+"%").Limit(3).Find(&animes)
-	fmt.Println("len of animes = ", len(animes))
-	for _, anime := range animes {
-		fmt.Printf("name of anime = %s, time of anime = %s\n", anime.TaiName, anime.Premiere)
-	}
+	Popularity  int
 }
 
 func (anime ACG) IsEmpty() bool {
 	return reflect.DeepEqual(anime, ACG{})
 }
 
-func PostgresExec(command string) {
-	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
-	ConnectDataBase(dbname)
-	result := DB.Exec(command)
-	fmt.Println(result)
+// 更新人氣以及還未放入資料庫的作品
+func UpdateAnimesInfo() {
+	maxPage := 404
+	for page := 2; page <= maxPage; page++ {
+		pageUrl := fmt.Sprintf("https://acg.gamer.com.tw/index.php?page=%d&p=ANIME&t=1&tnum=5406", page)
+		dom, _ := getDecument(pageUrl)
+
+		dom.Find("div.ACG-mainbox1").Each(func(idx int, selection *goquery.Selection) {
+			var anime ACG
+			// 獲得每個分頁底下動漫的網址
+			animeUrl, _ := selection.Find("div.ACG-mainbox2>h1.ACG-maintitle>a").First().Attr("href")
+			animeUrl = "https:" + animeUrl
+			animePopularity, _ := strconv.Atoi(selection.Find("div.ACG-mainbox4>p.ACG-mainplay>span").First().Text())
+
+			parse, _ := url.Parse(animeUrl)
+			query, _ := url.ParseQuery(parse.RawQuery)
+			sIndex := query.Get("s")
+
+			err := DB.Where("search_index = ?", sIndex).First(&anime).Error
+			// 代表該部作品沒有收錄在資料庫內部
+			if err != nil {
+				dom, _ := getDecument(animeUrl)
+				box := dom.Find("div.ACG-mster_box1").First()
+				anime.SearchIndex = sIndex
+				anime.Image, _ = box.Find("img").Attr("src")
+				anime.TaiName = box.Find("h1").First().Text()
+				anime.JapName = box.Find("h2").First().Text()
+				anime.Class = CheckColonExist(box.Find("ul.ACG-box1listA>li:contains(播映方式)").First().Text())
+				anime.Premiere = CheckColonExist(box.Find("ul.ACG-box1listA>li:contains(當地首播)").First().Text())
+
+				box.Find("ul.ACG-box1listB>li").Each(func(idx int, ss *goquery.Selection) {
+					switch idx {
+					case 0:
+						// 爬取作者欄位
+						anime.Author = CheckColonExist(ss.Text())
+					case 1:
+						// 爬取監督欄位
+						anime.Director = CheckColonExist(ss.Text())
+					case 2:
+						// 爬取製作廠商
+						anime.Firm = CheckColonExist(ss.Text())
+					case 3:
+						// 爬取台灣代理
+						anime.Agent = CheckColonExist(ss.Text())
+					case 4:
+						// 爬取官方網站
+						anime.Website = ss.Find("a").Text()
+					}
+				})
+
+				anime.Popularity = animePopularity
+				fmt.Println(anime.TaiName)
+				DB.Create(&anime)
+			} else {
+				// 如果作品存在 更新該作品的人氣
+				fmt.Println("update: ", anime.TaiName)
+				DB.Model(&anime).Where("search_index = ?", sIndex).Update("popularity", animePopularity)
+			}
+		})
+	}
 }
 
 func CreateACGTable() {

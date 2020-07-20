@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -24,4 +25,13 @@ func ConnectDataBase(dbname string) {
 
 func migration() {
 	DB.AutoMigrate(&ACG{})
+}
+
+func Test() {
+	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	ConnectDataBase(dbname)
+
+	var animes []ACG
+	DB.Find(&animes)
+	fmt.Printf("len of animes: %d\n", len(animes))
 }

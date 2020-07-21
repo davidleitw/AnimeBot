@@ -345,7 +345,7 @@ func handleRandAnime() model.ACG {
 	}
 
 	// 隨機存取符合條件的一部作品
-	model.DB.Where("premiere LIKE ?", year+"%").Order("RAND()").Find(&anime)
+	model.DB.Where("premiere LIKE ? AND popularity > ?", year+"%", 1200).Order("RAND()").First(&anime)
 	return anime
 }
 

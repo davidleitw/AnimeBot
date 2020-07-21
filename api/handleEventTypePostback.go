@@ -41,13 +41,17 @@ func HandleEventTypePostback(event *linebot.Event, bot *linebot.Client) {
 			err := handleAddItem(userID, search)
 			// 如果新增資料沒有錯誤, 回覆新增成功訊息
 			if err == nil {
-				_, replyerr := bot.ReplyMessage(
+				var anime model.ACG
+				model.DB.Where("search_index = ?", search).First(&anime)
+				replyMessage := fmt.Sprintf("已成功將%s新增至收藏清單", anime.TaiName)
+
+				_, replyErr := bot.ReplyMessage(
 					event.ReplyToken,
-					linebot.NewTextMessage("新增成功!"),
+					linebot.NewTextMessage(replyMessage),
 				).Do()
 				// 發送新增成功訊息錯誤時會跳到下面這行
-				if replyerr != nil {
-					log.Println("Add data result show error = ", replyerr)
+				if replyErr != nil {
+					log.Println("Add data result show error = ", replyErr)
 				}
 			}
 		}

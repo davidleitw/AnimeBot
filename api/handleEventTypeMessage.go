@@ -330,21 +330,6 @@ func buildFlexMessageWithAnime(anime model.ACG) *linebot.BubbleContainer {
 
 func handleRandAnime() model.ACG {
 	var anime model.ACG
-	// var year string
-	// rand.Seed(time.Now().Unix())
-
-	// // 從 2000年到2020年先選擇一年 0 ~ 20
-	// ly := rand.Intn(21)
-	// if ly >= 0 && ly < 10 {
-	// 	// 2001
-	// 	year = "200" + strconv.Itoa(ly)
-	// } else {
-	// 	// 2010
-	// 	year = "20" + strconv.Itoa(ly)
-	// }
-
-	// 隨機存取符合條件的一部作品
-	// model.DB.Where("premiere LIKE ? AND popularity > ?", year+"%", 2000).Order("RANDOM()").First(&anime)
 	model.DB.Where("popularity > ?", 2500).Order("RANDOM()").First(&anime)
 	return anime
 }

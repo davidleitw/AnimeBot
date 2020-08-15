@@ -34,7 +34,6 @@
 
 ![](https://imgur.com/kXo0Iwi.png)
 
-也可以選擇點擊網址加入: AnimeBot
 
 如果有什麼建議可以新增的功能或者是想法都可以一起來討論或者送PR。
 

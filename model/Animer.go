@@ -347,8 +347,3 @@ func SearchAnimeInfoWithAuthor(author string) []ACG {
 	}
 	return animes
 }
-
-// 用以定時檢測有無新番更新
-func AutoUpdate() {
-
-}

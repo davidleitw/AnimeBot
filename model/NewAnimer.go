@@ -157,3 +157,26 @@ func CrewEachNewAnime(urls []string) []NewAnime {
 	}
 	return animes
 }
+
+// 用以定時檢測有無新番更新
+func AutoUpdate() {
+	// CreateNewAnimeTable()
+	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
+	ConnectDataBase(dbname)
+	maxPageSearch := 3
+
+	for index := 1; index <= maxPageSearch; index++ {
+		singlePageURL := fmt.Sprintf("https://acg.gamer.com.tw/quarterly.php?page=%d&d=0", index)
+		urls, _ := CrewNewAnimePageUrl(singlePageURL)
+		for _, singleAnimeURL := range urls {
+			parse, _ := url.Parse(singleAnimeURL)
+			values, _ := url.ParseQuery(parse.RawQuery)
+
+			search_index := values.Get("s")
+
+			// search anime table
+
+			// search new_anime table
+		}
+	}
+}

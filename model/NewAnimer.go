@@ -194,7 +194,7 @@ func AutoUpdate() {
 	}
 
 	newAnimeInfos := CrewEachNewAnime(newAnimeURLs)
-	// CrewEachNewAnime(AnimeURLs)
+	CrewEachAnime(AnimeURLs)
 	for _, anime := range newAnimeInfos {
 		DB.Create(&anime)
 	}

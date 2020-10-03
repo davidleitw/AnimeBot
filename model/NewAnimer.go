@@ -160,13 +160,16 @@ func CrewEachNewAnime(urls []string) []NewAnime {
 
 // 用以定時檢測有無新番更新
 func AutoUpdate() {
-	// CreateNewAnimeTable()
+	CreateNewAnimeTable()
 	dbname := fmt.Sprintf("host=%s user=%s dbname=%s  password=%s", os.Getenv("HOST"), os.Getenv("DBUSER"), os.Getenv("DBNAME"), os.Getenv("PASSWORD"))
 	ConnectDataBase(dbname)
 	maxPageSearch := 3
 
+	var newAnimeURLs []string
+	var AnimeURLs []string
 	for index := 1; index <= maxPageSearch; index++ {
 		singlePageURL := fmt.Sprintf("https://acg.gamer.com.tw/quarterly.php?page=%d&d=0", index)
+		// 得到一頁每一部作品的網址
 		urls, _ := CrewNewAnimePageUrl(singlePageURL)
 		for _, singleAnimeURL := range urls {
 			parse, _ := url.Parse(singleAnimeURL)
@@ -174,9 +177,25 @@ func AutoUpdate() {
 
 			search_index := values.Get("s")
 
+			var nA NewAnime
+			var A ACG
 			// search anime table
-
+			err := DB.Where("search_index = ?", search_index).First(&nA).Error
+			if err != nil {
+				// ErrRecordNotFound
+				newAnimeURLs = append(newAnimeURLs, singleAnimeURL)
+			}
 			// search new_anime table
+			err = DB.Where("search_index = ?", search_index).First(&A).Error
+			if err != nil {
+				AnimeURLs = append(AnimeURLs, singleAnimeURL)
+			}
 		}
+	}
+
+	newAnimeInfos := CrewEachNewAnime(newAnimeURLs)
+	// CrewEachNewAnime(AnimeURLs)
+	for _, anime := range newAnimeInfos {
+		DB.Create(&anime)
 	}
 }
